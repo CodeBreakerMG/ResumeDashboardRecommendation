@@ -12,60 +12,60 @@ const JobDetailView = ({ job }) => {
 return (
   <Paper
     sx={{
-      height: 1000, // fixed height
-      overflowY: 'auto', // vertical scroll if needed
+      height: 1000,
+      overflowY: 'auto',
       p: 2,
       border: '1px solid #ccc',
       borderRadius: 4
     }}
     elevation={3}
   >
-      {/* Job Header */}
-      <Typography variant="h5" fontWeight="bold">
-        {job.title}
-      </Typography>
-      <Typography variant="subtitle1" color="text.secondary">
-        {job.company} • {job.location}
-      </Typography>
+    {/* Job Header */}
+    <Typography variant="h5" fontWeight="bold">
+      {job.jobTitle}
+    </Typography>
+    <Typography variant="subtitle1" color="text.secondary">
+      {job.company} • {job.location}
+    </Typography>
 
-      {/* Tags */}
-      <Box my={2}>
-        {job.categories.map((cat) => (
-          <Chip label={cat} key={cat} sx={{ mr: 1, mb: 1 }} />
-        ))}
-      </Box>
+    <Divider sx={{ my: 3 }} />
 
-      {/* Buttons */}
-      <Box my={2}>
-        <Button variant="contained" sx={{ mr: 2 }}>
-          Apply
-        </Button>
-        <Button variant="outlined">Save</Button>
-      </Box>
+    {/* Core Info */}
+    <Box mb={2}>
+      <Typography><strong>Experience:</strong> {job.experience}</Typography>
+      <Typography><strong>Qualifications:</strong> {job.qualifications}</Typography>
+      <Typography><strong>Salary Range:</strong> {job.salaryRange}</Typography>
+      <Typography><strong>Work Type:</strong> {job.workType}</Typography>
+      <Typography><strong>Posted On:</strong> {job.jobPostingDate}</Typography>
+      <Typography><strong>Coordinates:</strong> {job.latitude}, {job.longitude}</Typography>
+    </Box>
 
-      <Divider sx={{ my: 3 }} />
+    <Divider sx={{ my: 3 }} />
 
-      {/* Summary Content */}
-      <Box mt={2}>
-        <Typography variant="h6">Requirements</Typography>
-        <ul>
-          {job.requirements.map((req, idx) => (
-            <li key={idx}>{req}</li>
-          ))}
-        </ul>
+    {/* Skills */}
+    <Box mb={3}>
+      <Typography variant="h6">Skills</Typography>
+      {job.skills.map((skill, idx) => (
+        <Chip key={idx} label={skill} sx={{ mr: 1, mb: 1 }} />
+      ))}
+    </Box>
 
-        <Typography variant="h6" mt={3}>
-          Responsibilities
-        </Typography>
-        <ul>
-          {job.responsibilities.map((res, idx) => (
-            <li key={idx}>{res}</li>
-          ))}
-        </ul>
-      </Box>
-    </Paper>
+    {/* Responsibilities */}
+    <Box mb={3}>
+      <Typography variant="h6">Responsibilities</Typography>
+      <Typography>{job.responsibilities}</Typography>
+    </Box>
 
-  );
+    {/* Company Profile */}
+    <Box>
+      <Typography variant="h6">Company Profile</Typography>
+      <Typography><strong>Sector:</strong> {job.companyProfile.Sector}</Typography>
+      <Typography><strong>Industry:</strong> {job.companyProfile.Industry}</Typography>
+      <Typography><strong>City:</strong> {job.companyProfile.City}</Typography>
+      <Typography><strong>Website:</strong> <a href={`https://${job.companyProfile.Website}`} target="_blank" rel="noreferrer">{job.companyProfile.Website}</a></Typography>
+    </Box>
+  </Paper>
+);
 };
 
 export default JobDetailView;

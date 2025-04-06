@@ -14,6 +14,54 @@ const someJob = {
   responsibilities: ["Assist with stocking", "Support shrink and safety"],
 };
 
+const someDetailedJob = {
+  "jobId": "1372845428869057",
+  "experience": "1 to 9 Years",
+  "qualifications": "PhD",
+  "salaryRange": "$56K-$128K",
+  "location": "Ohio",
+  "country": "USA",
+  "latitude": 41.6086,
+  "longitude": 21.7453,
+  "workType": "Temporary",
+  "companySize": 29012,
+  "jobPostingDate": "2022-06-21",
+  "preference": "Both",
+  "contactPerson": "Carmen Taylor",
+  "contact": "(771)379-2825x765",
+  "jobTitle": "Family Nurse Practitioner",
+  "role": "Primary Care Provider",
+  "jobPortal": "Stack Overflow Jobs",
+  "jobDescription": "Primary Care Providers offer general medical care to patients. They diagnose and treat common health issues, perform check-ups, and refer patients to specialists as needed.",
+  "benefits": [
+    "Flexible Spending Accounts (FSAs)",
+    "Relocation Assistance",
+    "Legal Assistance",
+    "Employee Recognition Programs",
+    "Financial Counseling"
+  ],
+  "skills": [
+    "Medical diagnosis",
+    "Patient care",
+    "Medical record-keeping",
+    "Communication skills",
+    "Empathy and compassion"
+  ],
+  "responsibilities": "Provide primary healthcare to patients, including diagnosis, treatment, and preventive care. Conduct physical exams and health assessments. Order and interpret diagnostic tests.",
+  "company": "Kingfisher plc",
+  "companyProfile": {
+    "Sector": "Retail",
+    "Industry": "Retail - Home Improvement",
+    "City": "London",
+    "State": "N/A",
+    "Zip": "N/A",
+    "Website": "www.kingfisher.com",
+    "Ticker": "KGF.L",
+    "CEO": "Thierry Garnier"
+  }
+}
+
+
 const MainPage = () => {
   return (
     <Grid container spacing={2}>
@@ -22,7 +70,7 @@ const MainPage = () => {
         <Typography>ResumeParser</Typography>
       </Grid>
       <Grid size={4}>
-        <JobDetailView job={someJob} />
+        <JobDetailView job={someDetailedJob} />
       </Grid>
       <Grid size={8} container  >
         <Grid size={4} paddingX={1}>
