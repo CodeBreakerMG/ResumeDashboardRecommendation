@@ -1,44 +1,45 @@
 import React from 'react'; //This is the React Base module
-import { Box, Grid, Typography, Paper } from '@mui/material'; //Base Material UI Components https://mui.com/material-ui/react-box/
-import DataTable from '../components/DataTable/DataTable';
+import { Box, Grid, Typography, Paper  } from '@mui/material'; //Base Material UI Components https://mui.com/material-ui/react-box/
+import JobDetailView from '../components/Textual/JobDetailView';
+import AppBarTip from '../components/Other/AppBarTip';
+import GraphContainer from '../components/Other/GraphContainer';
+import LocationMap from '../components/Charts/LocationMap';
+
+const someJob = {
+  title: "Retail Customer Service Team Member",
+  company: "Michaels",
+  location: "Canton, OH, USA",
+  categories: ["Customer Experience", "Customer Support"],
+  requirements: ["Deliver friendly customer service", "Handle cash"],
+  responsibilities: ["Assist with stocking", "Support shrink and safety"],
+};
 
 const MainPage = () => {
-    return (
-        <Box p={4} sx={{ backgroundColor: '#f6f7fb', minHeight: '100vh' }}>
-          <Typography variant="h3" fontWeight={600} color="#052962" gutterBottom>
-            Resume Parser
-          </Typography>
-    
-          <Grid container spacing={3}>
-            <Grid item xs={12} md={6}>
-              <Paper
-                elevation={2}
-                sx={{ padding: 3, backgroundColor: '#ffffff', borderLeft: '8px solid #005DAB' }}
-              >
-                <Typography variant="h6" color="#052962" gutterBottom>
-                  Tabla de Datos
-                </Typography>
-                <DataTable />
-              </Paper>
-            </Grid>
-    
-            <Grid item xs={12} md={6}>
-              <Paper
-                elevation={2}
-                sx={{ padding: 3, backgroundColor: '#ffffff', borderLeft: '8px solid #f4868d' }}
-              >
-                <Typography variant="h6" color="#052962" gutterBottom>
-                  Gráficos (Próximamente)
-                </Typography>
-                <Box sx={{ height: 300, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                  <Typography variant="body1" color="#777">Aquí se mostrarán tus gráficos</Typography>
-                </Box>
-              </Paper>
-            </Grid>
-          </Grid>
-        </Box>
-      );
-    };
+  return (
+    <Grid container spacing={2}>
+      <AppBarTip/>
+      <Grid size={12}>
+        <Typography>ResumeParser</Typography>
+      </Grid>
+      <Grid size={4}>
+        <JobDetailView job={someJob} />
+      </Grid>
+      <Grid size={8} container  >
+        <Grid size={4} paddingX={1}>
+          <GraphContainer>
+            <Typography variant="h5">Hello World</Typography>
+          </GraphContainer>
+        </Grid>
+        <Grid size={4} paddingX={1}>
+          <GraphContainer>
+            <Typography variant="h5">Location</Typography>
+            <LocationMap/>
+          </GraphContainer>
+        </Grid>
+      </Grid>
+    </Grid>
+  );
+};
 
 export default MainPage;
 
