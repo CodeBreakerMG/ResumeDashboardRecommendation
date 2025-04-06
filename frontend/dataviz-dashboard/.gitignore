@@ -21,3 +21,7 @@
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
+
+
+#CSV Files
+/src/data/job_descriptions_sampled_5PERCENT.csv
