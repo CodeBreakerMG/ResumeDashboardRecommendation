@@ -3,3 +3,8 @@ uvicorn
 python-multipart
 pydantic
 sqlalchemy
+passlib[bcrypt]
+python-jose[cryptography]
+pydantic[email]
+python-docx
+PyMuPDF
