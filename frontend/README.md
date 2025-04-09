@@ -16,7 +16,9 @@ The Job Dataset has been taken from
     - `npm install papaparse`
     - `npm install recharts`
 	- `npm install react-router-dom`
-	- `npm install react-router-dom`
+	- `npm install @mui/x-charts`
+
+
 
 4. Commands that we can use inside that directory:
 

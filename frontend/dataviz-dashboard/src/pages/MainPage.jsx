@@ -1,10 +1,14 @@
-import React from 'react'; //This is the React Base module
-import { Box, Grid, Typography, Paper  } from '@mui/material'; //Base Material UI Components https://mui.com/material-ui/react-box/
+import React, { useEffect, useState } from 'react'; //This is the React Base module
+import { Stack , Grid, Typography, Button  } from '@mui/material'; //Base Material UI Components https://mui.com/material-ui/react-box/
 import JobDetailView from '../components/Textual/JobDetailView';
 import AppBarTip from '../components/Other/AppBarTip';
 import GraphContainer from '../components/Other/GraphContainer';
 import LocationMap from '../components/Charts/LocationMap';
+import SkillFrequencyChart from '../components/Charts/SkillFrequencyChart';
+import JobBenefitsRadarChart from '../components/Charts/JobBenefitsRadarChart';
+import jobsData from "../assets/jobsData.json"; // adjust the path accordingly
 
+/*
 const someJob = {
   title: "Retail Customer Service Team Member",
   company: "Michaels",
@@ -60,9 +64,25 @@ const someDetailedJob = {
     "CEO": "Thierry Garnier"
   }
 }
-
+*/
 
 const MainPage = () => {
+  const [jobIndex, setJobIndex] = useState(0);
+  const [jobs, setJobs] = useState([]);
+
+  useEffect(() => {
+    // Simulate async loading
+    setJobs(jobsData);
+  }, []);
+
+  const handleNext = () => {
+    setJobIndex((prev) => (prev + 1 < jobs.length ? prev + 1 : 0));
+  };
+
+  const handlePrevious = () => {
+    setJobIndex((prev) => (prev - 1 >= 0 ? prev - 1 : jobs.length - 1));
+  };
+
   return (
     <Grid container spacing={2}>
       <AppBarTip/>
@@ -70,18 +90,34 @@ const MainPage = () => {
         <Typography>ResumeParser</Typography>
       </Grid>
       <Grid size={4}>
-        <JobDetailView job={someDetailedJob} />
+        <JobDetailView job={jobs[jobIndex]} />
+        <Stack direction="row" spacing={2} mt={2} justifyContent="center">
+          <Button variant="outlined" onClick={handlePrevious}>Previous</Button>
+          <Button variant="contained" onClick={handleNext}>Next</Button>
+        </Stack>
       </Grid>
-      <Grid size={8} container  >
+      <Grid size={8} container>
         <Grid size={4} paddingX={1}>
           <GraphContainer>
-            <Typography variant="h5">Hello World</Typography>
+            <Typography variant="h5" gutterBottom>Skill Frequency</Typography>
+            <SkillFrequencyChart jobs={jobs} />
           </GraphContainer>
         </Grid>
         <Grid size={4} paddingX={1}>
           <GraphContainer>
             <Typography variant="h5">Location</Typography>
             <LocationMap/>
+          </GraphContainer>
+        </Grid>
+        <Grid size={4} paddingX={1}>
+          <GraphContainer>
+            <Typography variant="h5" gutterBottom>Skill Frequency</Typography>
+          </GraphContainer>
+        </Grid>
+        <Grid size={4} paddingX={1}>
+          <GraphContainer>
+            <Typography variant="h5" gutterBottom>Benefit Coverage</Typography>
+            <JobBenefitsRadarChart job={jobs[jobIndex]} jobs={jobs} />
           </GraphContainer>
         </Grid>
       </Grid>

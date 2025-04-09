@@ -1,9 +1,9 @@
 import React from 'react';
-import { useState } from 'react';
+//import { useState } from 'react';
 import { Box, Typography, Chip, Button, Paper, Divider } from '@mui/material';
 
 const JobDetailView = ({ job }) => {
-    
+  if (!job) return null;
 /*
     const [tab, setTab] = useState(0);
     const handleTabChange = (e, newValue) => setTab(newValue);
