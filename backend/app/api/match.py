@@ -1,3 +1,5 @@
+# app/api/match.py
+
 from fastapi import APIRouter, UploadFile, File, HTTPException
 from app.services.resume_matcher import process_resume_and_match_jobs
 
@@ -9,9 +11,6 @@ async def match_resume(file: UploadFile = File(...)):
         raise HTTPException(status_code=400, detail="Only PDF resumes are supported.")
 
     resume_bytes = await file.read()
+    result = process_resume_and_match_jobs(resume_bytes)
 
-    try:
-        result = process_resume_and_match_jobs(resume_bytes)
-        return result
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Error processing resume: {e}")
+    return result  # Contains matched jobs + word cloud data
