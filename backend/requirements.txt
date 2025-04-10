@@ -9,5 +9,5 @@ pydantic[email]
 python-docx
 PyMuPDF
 pandas
-fitz
 ollama
+sentence-transformers
