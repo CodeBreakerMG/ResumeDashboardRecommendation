@@ -87,7 +87,8 @@ const MainPage = () => {
     <Grid container spacing={2}>
       <AppBarTip/>
       <Grid size={12}>
-        <Typography>ResumeParser</Typography>
+ 
+    <Typography sx={{ fontFamily: 'Flexo', fontWeight: 700 }}>ResumeParser</Typography>
       </Grid>
       <Grid size={4}>
         <JobDetailView job={jobs[jobIndex]} />

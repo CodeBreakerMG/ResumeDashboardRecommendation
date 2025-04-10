@@ -1,0 +1,38 @@
+@font-face {
+    font-family: 'Flexo';
+    src: url('./Flexo-Regular.woff') format('woff'),
+         url('./Flexo-Regular.ttf') format('truetype'),
+         url('./Flexo-Regular.eot');
+    font-weight: 400;
+    font-style: normal;
+  }
+  
+  @font-face {
+    font-family: 'Flexo';
+    src: url('./Flexo-It.woff') format('woff'),
+         url('./Flexo-It.ttf') format('truetype'),
+         url('./Flexo-It.eot');
+    font-weight: 400;
+    font-style: italic;
+  }
+  
+  @font-face {
+    font-family: 'Flexo';
+    src: url('./Flexo-Bold.woff') format('woff'),
+         url('./Flexo-Bold.ttf') format('truetype'),
+         url('./Flexo-Bold.eot');
+    font-weight: 700;
+    font-style: normal;
+  }
+  
+  @font-face {
+    font-family: 'Flexo';
+    src: url('./Flexo-BoldIt.woff') format('woff'),
+         url('./Flexo-BoldIt.ttf') format('truetype'),
+         url('./Flexo-BoldIt.eot');
+    font-weight: 700;
+    font-style: italic;
+  }
+  
+  /* Add more as needed: Thin, Light, Medium, Heavy, Demi, etc. */
+  
