@@ -3,9 +3,14 @@ import json
 import numpy as np
 from sentence_transformers import SentenceTransformer, util
 from sqlalchemy.orm import Session
+from keybert import KeyBERT
 from app.db.database import SessionLocal
 from app.models.job import JobPosting
 import ollama
+
+# Models
+model = SentenceTransformer("all-MiniLM-L6-v2", device="cpu")
+kw_model = KeyBERT(model)
 
 # PDF parsing
 def extract_text_from_pdf_bytes(pdf_bytes: bytes) -> str:
@@ -36,10 +41,21 @@ Return ONLY a Python list of strings — no explanation.
         print(f"❌ Error extracting skills from LLM: {e}")
         return []
 
-# Load SBERT (force CPU to avoid GPU mismatch)
-model = SentenceTransformer("all-MiniLM-L6-v2", device="cpu")
+# Better word cloud with KeyBERT
+def extract_keywords_for_wordcloud(text: str, top_n: int = 25):
+    try:
+        keywords = kw_model.extract_keywords(
+            text,
+            keyphrase_ngram_range=(1, 3),
+            stop_words="english",
+            top_n=top_n
+        )
+        return [{"text": kw, "value": int(score * 100)} for kw, score in keywords]
+    except Exception as e:
+        print("❌ Error extracting word cloud keywords:", e)
+        return []
 
-# Improved: LLaMA re-ranking with matchReason
+# LLaMA Re-ranking with reasoning
 def rank_with_llama_with_reason(resume_skills, job_snippets):
     prompt = f"""
 You are a helpful job matching assistant. A candidate has these skills:
@@ -140,18 +156,15 @@ def process_resume_and_match_jobs(pdf_bytes: bytes) -> dict:
         resume_text = extract_text_from_pdf_bytes(pdf_bytes)
         resume_skills = extract_skills_from_text(resume_text)
         matches = get_top_job_matches(resume_skills)
+        word_cloud = extract_keywords_for_wordcloud(resume_text)
 
         return {
             "resume_skills": resume_skills,
             "matches": matches,
-            "wordCloud": [
-                {"text": skill, "value": resume_text.lower().count(skill.lower())}
-                for skill in resume_skills
-                if resume_text.lower().count(skill.lower()) > 0
-            ]
+            "wordCloud": word_cloud
         }
 
     except Exception as e:
         print("❌ Error in resume processing:", e)
         traceback.print_exc()
-        raise  # re-raises for FastAPI to send 500 error in dev
+        raise
