@@ -11,3 +11,7 @@ PyMuPDF
 pandas
 ollama
 sentence-transformers
+alembic
+numpy
+huggingface_hub[hf_xet]
+keybert

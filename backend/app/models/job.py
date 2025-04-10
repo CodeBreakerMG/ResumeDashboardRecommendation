@@ -27,3 +27,4 @@ class JobPosting(Base):
     responsibilities = Column(String)
     company = Column(String)
     company_profile = Column(JSON)  # <- parsed dict
+    embedding = Column(JSON, nullable=True)
