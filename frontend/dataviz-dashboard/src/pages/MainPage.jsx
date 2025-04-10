@@ -88,7 +88,8 @@ const MainPage = () => {
       <AppBarTip/>
       <Grid size={12}>
  
-    <Typography sx={{ fontFamily: 'Flexo', fontWeight: 700 }}>ResumeParser</Typography>
+
+    <Typography sx={{ fontFamily: 'Flexo', fontWeight: 700,  color: 'var(--color-newblue)' }}>ResumeParser</Typography>
       </Grid>
       <Grid size={4}>
         <JobDetailView job={jobs[jobIndex]} />

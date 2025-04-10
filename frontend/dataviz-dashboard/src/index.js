@@ -6,6 +6,8 @@ import { ThemeProvider } from '@mui/material/styles';
 import theme from './theme';
 import 'leaflet/dist/leaflet.css';
 import './index.css';
+import './assets/theme.css';
+
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
