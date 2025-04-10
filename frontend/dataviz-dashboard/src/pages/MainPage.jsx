@@ -1,5 +1,9 @@
 import React, { useEffect, useState } from 'react'; //This is the React Base module
-import { Stack , Grid, Typography, Button  } from '@mui/material'; //Base Material UI Components https://mui.com/material-ui/react-box/
+import { Stack, Box, Grid, Typography, Button  } from '@mui/material'; //Base Material UI Components https://mui.com/material-ui/react-box/
+import { useLocation } from 'react-router-dom';
+import axios from 'axios';
+
+
 import JobDetailView from '../components/Textual/JobDetailView';
 import AppBarTip from '../components/Other/AppBarTip';
 import GraphContainer from '../components/Other/GraphContainer';
@@ -66,14 +70,52 @@ const someDetailedJob = {
 }
 */
 
+const FAST_API_URL = "https://fine-nights-rush.loca.lt/resume/match"
+
 const MainPage = () => {
+
+
+  const location = useLocation();
+  const uploadedFile = location.state?.file;
+  const fileName = uploadedFile.name;
+
+  const [loading, setLoading] = useState(false);
   const [jobIndex, setJobIndex] = useState(0);
   const [jobs, setJobs] = useState([]);
 
   useEffect(() => {
-    // Simulate async loading
-    setJobs(jobsData);
-  }, []);
+    const sendFileToAPI = async () => {
+      if (!uploadedFile) return;
+  
+      setLoading(true); // Start loading
+  
+      const formData = new FormData();
+      formData.append("file", uploadedFile);
+  
+      try {
+        const response = await axios.post(
+          FAST_API_URL,
+          formData,
+          {
+            headers: {
+              "Content-Type": "multipart/form-data",
+            },
+          }
+        );
+        setJobs(response.data.matches); // or response.data.jobs
+        console.log("API Response:", response.data);
+      } catch (error) {
+        console.error("Error posting file to API:", error);
+      } finally {
+        setLoading(false); // Stop loading no matter what
+      }
+    };
+  
+    sendFileToAPI();
+  }, [uploadedFile]);
+    // 
+    // setJobs(jobsData); [Deprecated] Old Data from frontend folders Simulate async loading
+  //}, []);
 
   const handleNext = () => {
     setJobIndex((prev) => (prev + 1 < jobs.length ? prev + 1 : 0));
@@ -83,13 +125,33 @@ const MainPage = () => {
     setJobIndex((prev) => (prev - 1 >= 0 ? prev - 1 : jobs.length - 1));
   };
 
-  return (
-    <Grid container spacing={2}>
-      <AppBarTip/>
+ return (
+  <>
+    {loading ? (
+      <Box
+        sx={{
+          position: 'fixed',
+          top: 0,
+          left: 0,
+          width: '100vw',
+          height: '100vh',
+          backgroundColor: 'rgba(255,255,255,0.8)',
+          zIndex: 2000,
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
+        }}
+      >
+        <Typography variant="h4">Parsing Resume...</Typography>
+        {/* Optional: <CircularProgress color="primary" sx={{ ml: 2 }} /> */}
+      </Box>
+    ) : (
+      <Grid container spacing={2}>
+        <AppBarTip filename={fileName} file={uploadedFile} />
       <Grid size={12}>
  
 
-    <Typography sx={{ fontFamily: 'Flexo', fontWeight: 700,  color: 'var(--color-newblue)' }}>ResumeParser</Typography>
+    <Typography sx={{ fontFamily: 'Flexo', fontWeight: 700,  color: 'var(--color-newblue)' }}>{fileName}</Typography>
       </Grid>
       <Grid size={4}>
         <JobDetailView job={jobs[jobIndex]} />
@@ -124,6 +186,8 @@ const MainPage = () => {
         </Grid>
       </Grid>
     </Grid>
+    )}
+      </>
   );
 };
 

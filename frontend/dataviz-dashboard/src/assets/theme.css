@@ -1,8 +1,9 @@
 :root {
+    --color-newblue: rgb(0,93,189);
     --color-neworange: rgb(255,133,0);
     --color-newmagenta: rgb(218,0,110);
     --color-newred: rgb(255,78,0);
-    --color-newblue: rgb(0,93,189);
     --color-newskyblue: rgb(0,164,196);
     --color-newgreen: rgb(122,181,29);
+    --color-newyellow: rgb(252,196,0);
   }
