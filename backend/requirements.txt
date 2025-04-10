@@ -1,0 +1,17 @@
+fastapi
+uvicorn
+python-multipart
+pydantic
+sqlalchemy
+passlib[bcrypt]
+python-jose[cryptography]
+pydantic[email]
+python-docx
+PyMuPDF
+pandas
+ollama
+sentence-transformers
+alembic
+numpy
+huggingface_hub[hf_xet]
+keybert
