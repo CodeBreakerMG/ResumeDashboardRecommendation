@@ -1,3 +1,4 @@
+
 # 📄 Resume Recommendation Tool (FastAPI + Ollama + Embeddings)
 
 This project is a resume-to-job matching system built with **FastAPI**, **Ollama (LLM)**, **SBERT embeddings**, and a local **SQLite** database of job listings. It allows users to upload a PDF resume and returns the top job matches, complete with a match score, matched skills, and match reason.
@@ -10,9 +11,9 @@ This project is a resume-to-job matching system built with **FastAPI**, **Ollama
 - ✅ Skill extraction using Ollama (LLaMA/Mistral)
 - ✅ Job embeddings with SentenceTransformers (SBERT)
 - ✅ Hybrid ranking with embeddings + LLaMA for match reason
-- ✅ Word cloud data output
-- ✅ Job CRUD via FastAPI
-- ✅ Dockerized for easy deployment
+- ✅ Word cloud generation
+- ✅ Full CRUD for jobs via FastAPI
+- ✅ Docker-ready for deployment
 
 ---
 
@@ -25,38 +26,78 @@ backend/
 │   ├── db/                  # SQLAlchemy database setup
 │   ├── models/              # ORM models
 │   ├── schemas/             # Pydantic models
-│   ├── scripts/             # Data loaders and utils
+│   ├── scripts/             # Data loaders and utilities
 │   └── services/            # Business logic (matcher, parser, etc.)
 ├── alembic/                 # Database migrations
-├── app.db                   # SQLite database (mounted, not in Docker image)
+├── app.db                   # SQLite database (not included in Docker image)
 ├── requirements.txt
 ├── Dockerfile
 ```
 
 ---
 
-## 🐳 Docker Setup
+## 🧪 Local Development
 
-### Build the image
+### 1. Clone the Repository
+
+```bash
+git clone https://github.com/your-username/resume-recommendation-tool.git
+cd resume-recommendation-tool/backend
+```
+
+### 2. Set Up Environment
+
+Use `venv` or `conda`. Example with `venv`:
+
+```bash
+python -m venv .venv
+source .venv/bin/activate
+pip install -r requirements.txt
+```
+
+### 3. Run the API with Uvicorn
+
+```bash
+uvicorn app.main:app --reload
+```
+
+> The API will be available at http://127.0.0.1:8000
+
+You can now upload resumes via `/docs` or use Postman/your frontend.
+
+> ⚠️ Make sure **Ollama** is running locally (`ollama serve`)
+
+---
+
+## 🐳 Docker Deployment
+
+### 1. Build Docker Image
 
 ```bash
 docker build -t resume-api .
 ```
 
-### Run with mounted database
+### 2. Run with SQLite DB Mounted
 
 ```bash
-docker run -it --rm \
-  -v /path/to/resumetool.db:/app/app.db \
-  -p 8000:8000 \
-  resume-api
+docker run -it --rm   -v /path/to/resumeapp.db:/app/app.db   -p 8000:8000   resume-api
 ```
 
-> You can also use `--network host` if connecting to a local Ollama instance.
+Or if using **local Ollama**, use host networking:
+
+```bash
+docker run -it --rm   --network host   -v /path/to/resumeapp.db:/app/app.db   -p 8000:8000   resume-api
+```
+
+### 3. Enable Auto-Restart on Reboots
+
+```bash
+docker run -d   --restart unless-stopped   --network host   -v /home/ubuntu/resumeapp.db:/app/app.db   -p 8000:8000   resume-api
+```
 
 ---
 
-## 📥 API Endpoint
+## 🔗 API Endpoint
 
 ### `POST /resume/match`
 
@@ -88,99 +129,22 @@ docker run -it --rm \
 
 ## 🧠 Matching Logic
 
-- Uses **SBERT** to get resume/job embeddings
-- Uses **cosine similarity** for initial filtering
-- Then **Ollama** ranks top 100 jobs and explains why each one fits
-
----
-
-## 🧪 Development
-
-- Launch locally with `uvicorn app.main:app --reload`
-- Use Postman or your frontend to hit `/resume/match`
+1. Extracts text from PDF using `PyMuPDF`
+2. Skills are extracted using a local LLM via Ollama
+3. Skills are embedded using SBERT (MiniLM)
+4. Compared to job embeddings using cosine similarity
+5. Top jobs are re-ranked with Mistral and a match reason is generated
 
 ---
 
 ## ⚠️ Notes
 
-- The SQLite DB is ~3 GB — it is **not included in the image**
-- Ollama must be running locally (`ollama serve`)
-- You can scale this with Docker Compose or cloud hosting
+- The database (`app.db`) is **not included in the Docker image**
+- Make sure **Ollama** is installed and running (`ollama serve`)
+- Word clouds use extracted skills and frequency from the full resume
 
 ---
 
 ## 📚 License
 
 MIT License
----
-
-## 🐳 Full Docker Deployment Guide
-
-### 1. Clone and Build
-
-```bash
-git clone https://github.com/your-username/resume-recommendation-tool.git
-cd resume-recommendation-tool/backend
-docker build -t resume-api .
-```
-
-### 2. Run the Container with External SQLite DB
-
-```bash
-docker run -it --rm \
-  -v /home/ubuntu/resumetool.db:/app/app.db \
-  -p 8000:8000 \
-  resume-api
-```
-
-> Replace `/home/ubuntu/resumetool.db` with the absolute path to your real database.
-
-### 3. Connect to Local Ollama (LLM)
-
-To allow the Docker container to access your local Ollama server (default `localhost:11434`):
-
-- Make sure `ollama serve` is running on your host
-- Use `--network host` to allow full access:
-
-```bash
-docker run -it --rm \
-  --network host \
-  -v /home/ubuntu/resumetool.db:/app/app.db \
-  -p 8000:8000 \
-  resume-api
-```
-
-**Or**, on Linux, add this to your `/etc/hosts` if needed:
-
-```
-127.0.0.1 host.docker.internal
-```
-
-Then inside your app, connect to `http://host.docker.internal:11434` to reach Ollama.
-
----
-
-### ✅ Optional: Docker Compose Example
-
-You can create a `docker-compose.yml`:
-
-```yaml
-version: "3.9"
-
-services:
-  resume_api:
-    build: .
-    ports:
-      - "8000:8000"
-    volumes:
-      - /home/ubuntu/resumetool.db:/app/app.db
-    restart: unless-stopped
-```
-
-Then:
-
-```bash
-docker-compose up --build
-```
-
----
