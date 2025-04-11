@@ -6,7 +6,7 @@ import GraphContainer from '../components/Other/GraphContainer';
 import LocationMap from '../components/Charts/LocationMap';
 import SkillFrequencyChart from '../components/Charts/SkillFrequencyChart';
 import JobBenefitsRadarChart from '../components/Charts/JobBenefitsRadarChart';
-import jobsData from "../assets/jobsData.json"; // adjust the path accordingly
+import jobsData from "../assets/jobsData_old.json"; // adjust the path accordingly
 
 /*
 const someJob = {
@@ -112,13 +112,23 @@ const SampleMainPage = () => {
         </Grid>
         <Grid size={4} paddingX={1}>
           <GraphContainer>
-            <Typography variant="h5" gutterBottom>Skill Frequency</Typography>
+            <Typography variant="h5" gutterBottom>Graph</Typography>
           </GraphContainer>
         </Grid>
         <Grid size={4} paddingX={1}>
           <GraphContainer>
             <Typography variant="h5" gutterBottom>Benefit Coverage</Typography>
             <JobBenefitsRadarChart job={jobs[jobIndex]} jobs={jobs} />
+          </GraphContainer>
+        </Grid>
+        <Grid size={4} paddingX={1}>
+          <GraphContainer>
+            <Typography variant="h5" gutterBottom>Graph</Typography>
+          </GraphContainer>
+        </Grid>
+        <Grid size={4} paddingX={1}>
+          <GraphContainer>
+            <Typography variant="h5" gutterBottom>Graph</Typography>
           </GraphContainer>
         </Grid>
       </Grid>

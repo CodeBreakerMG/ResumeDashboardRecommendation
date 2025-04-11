@@ -10,7 +10,7 @@ const LocationMap = ({ location }) => {
   const [selectedState, setSelectedState] = useState(null);
   const [isValid, setIsValid] = useState(true);
 //   For validation
-//   location = "California"
+  //location = "California"
 
   useEffect(() => {
     if (!location) {

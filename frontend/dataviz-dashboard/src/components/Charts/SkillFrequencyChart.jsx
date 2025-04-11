@@ -2,7 +2,7 @@ import React, { useMemo, useRef, useEffect, useState } from 'react';
 import { BarChart } from '@mui/x-charts/BarChart';
 import { axisClasses } from '@mui/x-charts/ChartsAxis';
 
-const MAX_DISPLAYED_SKILLS = 5
+const MAX_DISPLAYED_SKILLS = 10
 
 const SkillFrequencyChart = ({ jobs }) => {
   const containerRef = useRef(null);
@@ -43,7 +43,7 @@ const SkillFrequencyChart = ({ jobs }) => {
   }, [jobs]);
 
   return (
-    <div ref={containerRef} style={{ width: '100%', height: '100%' }}>
+    <div ref={containerRef} style={{ width: '99%', height: '90%' }}>
       <BarChart
         dataset={inverseSortedSkills}
         xAxis={[
@@ -60,7 +60,7 @@ const SkillFrequencyChart = ({ jobs }) => {
         series={[
           {
             dataKey: 'count',
-            label: 'Occurrences',
+           
             color: '#1976d2',
           },
         ]}

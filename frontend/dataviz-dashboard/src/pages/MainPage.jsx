@@ -10,67 +10,13 @@ import GraphContainer from '../components/Other/GraphContainer';
 import LocationMap from '../components/Charts/LocationMap';
 import SkillFrequencyChart from '../components/Charts/SkillFrequencyChart';
 import JobBenefitsRadarChart from '../components/Charts/JobBenefitsRadarChart';
+import JobComparisonChart from '../components/Charts/JobComparisonChart';
+
 import jobsData from "../assets/jobsData.json"; // adjust the path accordingly
 
-/*
-const someJob = {
-  title: "Retail Customer Service Team Member",
-  company: "Michaels",
-  location: "Canton, OH, USA",
-  categories: ["Customer Experience", "Customer Support"],
-  requirements: ["Deliver friendly customer service", "Handle cash"],
-  responsibilities: ["Assist with stocking", "Support shrink and safety"],
-};
+//const FAST_API_URL = "https://fine-nights-rush.loca.lt/resume/match"
 
-const someDetailedJob = {
-  "jobId": "1372845428869057",
-  "experience": "1 to 9 Years",
-  "qualifications": "PhD",
-  "salaryRange": "$56K-$128K",
-  "location": "Ohio",
-  "country": "USA",
-  "latitude": 41.6086,
-  "longitude": 21.7453,
-  "workType": "Temporary",
-  "companySize": 29012,
-  "jobPostingDate": "2022-06-21",
-  "preference": "Both",
-  "contactPerson": "Carmen Taylor",
-  "contact": "(771)379-2825x765",
-  "jobTitle": "Family Nurse Practitioner",
-  "role": "Primary Care Provider",
-  "jobPortal": "Stack Overflow Jobs",
-  "jobDescription": "Primary Care Providers offer general medical care to patients. They diagnose and treat common health issues, perform check-ups, and refer patients to specialists as needed.",
-  "benefits": [
-    "Flexible Spending Accounts (FSAs)",
-    "Relocation Assistance",
-    "Legal Assistance",
-    "Employee Recognition Programs",
-    "Financial Counseling"
-  ],
-  "skills": [
-    "Medical diagnosis",
-    "Patient care",
-    "Medical record-keeping",
-    "Communication skills",
-    "Empathy and compassion"
-  ],
-  "responsibilities": "Provide primary healthcare to patients, including diagnosis, treatment, and preventive care. Conduct physical exams and health assessments. Order and interpret diagnostic tests.",
-  "company": "Kingfisher plc",
-  "companyProfile": {
-    "Sector": "Retail",
-    "Industry": "Retail - Home Improvement",
-    "City": "London",
-    "State": "N/A",
-    "Zip": "N/A",
-    "Website": "www.kingfisher.com",
-    "Ticker": "KGF.L",
-    "CEO": "Thierry Garnier"
-  }
-}
-*/
-
-const FAST_API_URL = "https://fine-nights-rush.loca.lt/resume/match"
+const FAST_API_URL =  "https://7da2-165-91-13-16.ngrok-free.app/resume/match"
 
 const MainPage = () => {
 
@@ -87,32 +33,38 @@ const MainPage = () => {
     const sendFileToAPI = async () => {
       if (!uploadedFile) return;
   
-      setLoading(true); // Start loading
+      setLoading(true);
   
       const formData = new FormData();
       formData.append("file", uploadedFile);
   
-      try {
-        const response = await axios.post(
-          FAST_API_URL,
-          formData,
-          {
+      const fetchWithTimeout = () =>
+        Promise.race([
+          axios.post(FAST_API_URL, formData, {
             headers: {
               "Content-Type": "multipart/form-data",
             },
-          }
-        );
-        setJobs(response.data.matches); // or response.data.jobs
+          }),
+          new Promise((_, reject) =>
+            setTimeout(() => reject(new Error("Timeout")), 30000)
+          ),
+        ]);
+  
+      try {
+        const response = await fetchWithTimeout();
+        setJobs(response.data.matches); // Or response.data.jobs
         console.log("API Response:", response.data);
       } catch (error) {
-        console.error("Error posting file to API:", error);
+        console.error("API call failed or timed out. Using local fallback.", error);
+        setJobs(jobsData); // Load local jobs
       } finally {
-        setLoading(false); // Stop loading no matter what
+        setLoading(false);
       }
     };
   
     sendFileToAPI();
   }, [uploadedFile]);
+  
     // 
     // setJobs(jobsData); [Deprecated] Old Data from frontend folders Simulate async loading
   //}, []);
@@ -145,14 +97,14 @@ const MainPage = () => {
         <Typography variant="h4">Parsing Resume...</Typography>
         {/* Optional: <CircularProgress color="primary" sx={{ ml: 2 }} /> */}
       </Box>
-    ) : (
+    ) : jobs.length > 0 ? (
       <Grid container spacing={2}>
         <AppBarTip filename={fileName} file={uploadedFile} />
       <Grid size={12}>
  
 
     <Typography sx={{ fontFamily: 'Flexo', fontWeight: 700,  color: 'var(--color-newblue)' }}>{fileName}</Typography>
-      </Grid>
+    </Grid>
       <Grid size={4}>
         <JobDetailView job={jobs[jobIndex]} />
         <Stack direction="row" spacing={2} mt={2} justifyContent="center">
@@ -163,19 +115,14 @@ const MainPage = () => {
       <Grid size={8} container>
         <Grid size={4} paddingX={1}>
           <GraphContainer>
-            <Typography variant="h5" gutterBottom>Skill Frequency</Typography>
-            <SkillFrequencyChart jobs={jobs} />
+            <Typography variant="h5" gutterBottom>Experience & Salary Comparison</Typography>
+            <JobComparisonChart job={jobs[jobIndex]} jobs={jobs} />
           </GraphContainer>
         </Grid>
         <Grid size={4} paddingX={1}>
           <GraphContainer>
             <Typography variant="h5">Location</Typography>
-            <LocationMap/>
-          </GraphContainer>
-        </Grid>
-        <Grid size={4} paddingX={1}>
-          <GraphContainer>
-            <Typography variant="h5" gutterBottom>Skill Frequency</Typography>
+            <LocationMap location={jobs[jobIndex].location}/>
           </GraphContainer>
         </Grid>
         <Grid size={4} paddingX={1}>
@@ -184,11 +131,31 @@ const MainPage = () => {
             <JobBenefitsRadarChart job={jobs[jobIndex]} jobs={jobs} />
           </GraphContainer>
         </Grid>
+        <Grid size={4} paddingX={1}>
+          <GraphContainer>
+            <Typography variant="h5" gutterBottom>Skill Frequency</Typography>
+            <SkillFrequencyChart jobs={jobs} />
+          </GraphContainer>
+        </Grid>
+        <Grid size={4} paddingX={1}>
+          <GraphContainer>
+            <Typography variant="h5" gutterBottom>Graph</Typography>
+          </GraphContainer>
+        </Grid>
+        <Grid size={4} paddingX={1}>
+          <GraphContainer>
+            <Typography variant="h5" gutterBottom>Graph</Typography>
+          </GraphContainer>
+        </Grid>
       </Grid>
     </Grid>
+    ) : (
+      <Typography variant="h6" sx={{ textAlign: 'center', mt: 10 }}>
+        No job data found. Please upload a valid file.
+      </Typography>
     )}
-      </>
-  );
+  </>
+);
 };
 
 export default MainPage;

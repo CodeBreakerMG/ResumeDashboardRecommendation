@@ -12,7 +12,7 @@ const JobDetailView = ({ job }) => {
 return (
   <Paper
     sx={{
-      height: 1000,
+      height: 1020,
       overflowY: 'auto',
       p: 2,
       border: '1px solid #ccc',
@@ -37,7 +37,8 @@ return (
       <Typography><strong>Salary Range:</strong> {job.salaryRange}</Typography>
       <Typography><strong>Work Type:</strong> {job.workType}</Typography>
       <Typography><strong>Posted On:</strong> {job.jobPostingDate}</Typography>
-      <Typography><strong>Coordinates:</strong> {job.latitude}, {job.longitude}</Typography>
+      <Typography><strong>Role:</strong>  {job.role}</Typography>
+      <Typography><strong>Setting:</strong>  {job.preference}</Typography>
     </Box>
 
     <Divider sx={{ my: 3 }} />
@@ -48,6 +49,12 @@ return (
       {job.skills.map((skill, idx) => (
         <Chip key={idx} label={skill} sx={{ mr: 1, mb: 1 }} />
       ))}
+    </Box>
+    
+    {/* Job Description */}
+    <Box mb={3}>
+      <Typography variant="h6">Description</Typography>
+      <Typography>{job.jobDescription}</Typography>
     </Box>
 
     {/* Responsibilities */}
@@ -63,6 +70,8 @@ return (
       <Typography><strong>Industry:</strong> {job.companyProfile.Industry}</Typography>
       <Typography><strong>City:</strong> {job.companyProfile.City}</Typography>
       <Typography><strong>Website:</strong> <a href={`https://${job.companyProfile.Website}`} target="_blank" rel="noreferrer">{job.companyProfile.Website}</a></Typography>
+      <Typography><strong>Contact Person :</strong>{job.companyProfile.contacPerson} • {job.companyProfile.contact}</Typography>
+      <Typography><strong>City:</strong> {job.companyProfile.City}</Typography>
     </Box>
   </Paper>
 );
