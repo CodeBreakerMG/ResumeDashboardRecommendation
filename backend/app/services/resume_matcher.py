@@ -92,6 +92,78 @@ Do NOT include anything outside the JSON list. No explanations. Just JSON.
     except Exception as e:
         print(f"❌ Error parsing LLaMA response: {e}")
         return []
+    
+def get_salary_progression_trend(job_title: str):
+    db: Session = SessionLocal()
+    jobs = db.query(JobPosting).filter(JobPosting.job_title == job_title).all()
+
+    matching_jobs = {}
+
+    for job in jobs:
+        if job.job_title == job_title:
+            experience = job.experience.split("to")
+            if len(experience) == 2:
+                min_exp = int(experience[0].strip())
+                max_exp = int(experience[1].strip())
+                mean_exp = (min_exp + max_exp) / 2
+
+            salary = job.salary_range.split("-")
+            if len(salary) == 2:
+                min_salary = int(salary[0].replace("$", "").replace("k", "").strip())
+                max_salary = int(salary[1].replace("$", "").replace("k", "").strip())
+                mean_salary = (min_salary + max_salary) / 2
+            
+            if mean_exp not in matching_jobs:
+                matching_jobs[mean_exp] = [mean_salary]
+            else:
+                matching_jobs[mean_exp].append(mean_salary)
+            # calculate the mean of the salaries for that experience
+            matching_jobs[mean_exp] = sum(matching_jobs[mean_exp]) / len(matching_jobs[mean_exp])
+    db.close()
+
+    return matching_jobs   
+
+def get_salary_location_trend(job_title: str):
+    db: Session = SessionLocal()
+    jobs = db.query(JobPosting).filter(JobPosting.job_title == job_title).all()
+
+    matching_jobs = {}
+
+    for job in jobs:
+        if job.job_title == job_title:
+            salary = job.salary_range.split("-")
+            if len(salary) == 2:
+                min_salary = int(salary[0].replace("$", "").replace("k", "").strip())
+                max_salary = int(salary[1].replace("$", "").replace("k", "").strip())
+                mean_salary = (min_salary + max_salary) / 2
+            
+            if job.location not in matching_jobs:
+                matching_jobs[job.location] = [mean_salary]
+            else:
+                matching_jobs[job.location].append(mean_salary)
+            # calculate the mean of the salaries for that location
+            matching_jobs[job.location] = sum(matching_jobs[job.location]) / len(matching_jobs[job.location])
+    db.close()
+
+    return matching_jobs 
+
+def get_salary_trend(job_matches: list[dict]):
+    top_job_titles = []
+    for match in job_matches:
+        if match["jobTitle"] not in top_job_titles:
+            top_job_titles.append(match["jobTitle"])
+        if len(top_job_titles) >= 3:
+            break
+
+    salary_trend = {}
+    for job_title in top_job_titles:
+        salary_progression_trend = get_salary_progression_trend(job_title)
+        salary_location_trend = get_salary_location_trend(job_title)
+
+        salary_trend[job_title]["progression"] = salary_progression_trend
+        salary_trend[job_title]["location"] = salary_location_trend
+        
+    return salary_trend
 
 # Match resume skills with job postings
 def get_top_job_matches(resume_skills: list[str], top_n: int = 10):
@@ -157,11 +229,13 @@ def process_resume_and_match_jobs(pdf_bytes: bytes) -> dict:
         resume_skills = extract_skills_from_text(resume_text)
         matches = get_top_job_matches(resume_skills)
         word_cloud = extract_keywords_for_wordcloud(resume_text)
-
+        salary_trend = get_salary_trend(matches)
+        
         return {
             "resume_skills": resume_skills,
             "matches": matches,
-            "wordCloud": word_cloud
+            "wordCloud": word_cloud,
+            "salaryTrend": salary_trend
         }
 
     except Exception as e:
