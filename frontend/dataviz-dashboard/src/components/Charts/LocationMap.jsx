@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { MapContainer, TileLayer, GeoJSON } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
-import usStatesData from '../../data/us-states.json'; // Adjust the path based on your project structure
+import usStatesData from '../../assets/us-states.json'; // Adjust the path based on your project structure
 
 // Default center coordinate (geographic center of the contiguous US)
 const defaultCenter = [39.8283, -98.5795];
