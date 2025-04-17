@@ -3,7 +3,7 @@ from app.db.database import SessionLocal
 from app.models.job import JobPosting
 from sentence_transformers import SentenceTransformer
 
-model = SentenceTransformer("all-MiniLM-L6-v2")
+model = SentenceTransformer("all-MiniLM-L6-v2", device="cpu")
 
 def compute_embeddings():
     db: Session = SessionLocal()
