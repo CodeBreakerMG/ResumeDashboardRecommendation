@@ -17,3 +17,6 @@ huggingface_hub[hf_xet]
 keybert
 google-generativeai
 python-dotenv
+wordcloud
+spacy
+nltk

@@ -53,6 +53,7 @@ Use `venv` or `conda`. Example with `venv`:
 python -m venv .venv
 source .venv/bin/activate
 pip install -r requirements.txt
+python -m spacy download en_core_web_sm
 ```
 
 ### 3. Run the API with Uvicorn
