@@ -12,6 +12,8 @@ from app.models.job import JobPosting
 from dotenv import load_dotenv
 import google.generativeai as genai
 import ollama
+from extract_skills import extract_skills
+from WordCloud import WordCloud
 
 # Load environment variables
 load_dotenv()
@@ -285,19 +287,41 @@ def get_salary_trend(job_matches: list[dict]):
         }
     return trend
 
+# ------------------------ WORD CLOUD ------------------------
+def show_skills_wordcloud(skill_freq):
+    # Generate word cloud
+    wordcloud = WordCloud(
+        width=1000,
+        height=500,
+        background_color=None,  # Transparent background
+        mode="RGBA",  # Enables transparency in output
+        colormap="coolwarm",  # Color theme for words
+        max_words=100,
+        contour_color='steelblue',
+        contour_width=2,
+        max_font_size=150
+    ).generate_from_frequencies(skill_freq)
+
+    # Save word cloud to a file with transparency
+    wordcloud.to_file("wordcloud.png")
+
 # ------------------------ MAIN ENTRY POINT ------------------------
 def process_resume_and_match_jobs(pdf_bytes: bytes) -> dict:
     try:
         resume_text = extract_text_from_pdf_bytes(pdf_bytes)
         resume_skills = extract_skills_with_gemini(resume_text)
         matches = get_top_job_matches(resume_skills)
-        word_cloud = extract_keywords_for_wordcloud(resume_text)
+        # word_cloud = extract_keywords_for_wordcloud(resume_text)
+        word_cloud_skills_freq = extract_skills(resume_text)
         salary_trend = get_salary_trend(matches)
+
+        # Generate word cloud
+        # show_skills_wordcloud(word_cloud_skills_freq) # Call this function to create PNG (will be called at frontend)
 
         return {
             "resume_skills": resume_skills,
             "matches": matches,
-            "wordCloud": word_cloud,
+            "word_cloud_skills_freq": word_cloud_skills_freq,
             "salaryTrend": salary_trend
         }
 
