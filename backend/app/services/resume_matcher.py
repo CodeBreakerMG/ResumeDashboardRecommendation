@@ -12,8 +12,8 @@ from app.models.job import JobPosting
 from dotenv import load_dotenv
 import google.generativeai as genai
 import ollama
-from extract_skills import extract_skills
-from WordCloud import WordCloud
+from app.services.extract_skills import extract_skills
+from wordcloud import WordCloud
 
 # Load environment variables
 load_dotenv()
