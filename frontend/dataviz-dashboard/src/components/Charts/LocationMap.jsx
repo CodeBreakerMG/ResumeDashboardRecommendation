@@ -1,16 +1,87 @@
 import React, { useState, useEffect } from 'react';
 import { MapContainer, TileLayer, GeoJSON } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
-import usStatesData from '../../data/us-states.json'; // Adjust the path based on your project structure
+import usStatesData from '../../assets/us-states.json'; // Adjust the path based on your project structure
 
 // Default center coordinate (geographic center of the contiguous US)
 const defaultCenter = [39.8283, -98.5795];
+
+// For Validation
+const stateSalaries = {
+  'California': 120000,
+  'New York': 110000,
+  'Texas': 90000,
+  'Florida': 85000,
+  'Illinois': 95000,
+  'Pennsylvania': 88000,
+  'Ohio': 82000,
+  'Georgia': 85000,
+  'North Carolina': 83000,
+  'Michigan': 85000,
+  'New Jersey': 105000,
+  'Virginia': 95000,
+  'Washington': 100000,
+  'Arizona': 85000,
+  'Massachusetts': 110000,
+  'Tennessee': 80000,
+  'Indiana': 80000,
+  'Missouri': 80000,
+  'Maryland': 95000,
+  'Wisconsin': 82000,
+  'Minnesota': 90000,
+  'Colorado': 95000,
+  'Alabama': 75000,
+  'South Carolina': 78000,
+  'Louisiana': 75000,
+  'Kentucky': 75000,
+  'Oregon': 90000,
+  'Oklahoma': 75000,
+  'Connecticut': 95000,
+  'Utah': 85000,
+  'Iowa': 80000,
+  'Nevada': 85000,
+  'Arkansas': 75000,
+  'Mississippi': 70000,
+  'Kansas': 80000,
+  'New Mexico': 75000,
+  'Nebraska': 80000,
+  'West Virginia': 70000,
+  'Idaho': 75000,
+  'Hawaii': 90000,
+  'New Hampshire': 85000,
+  'Maine': 80000,
+  'Rhode Island': 85000,
+  'Montana': 75000,
+  'Delaware': 85000,
+  'South Dakota': 75000,
+  'North Dakota': 75000,
+  'Alaska': 90000,
+  'Vermont': 80000,
+  'Wyoming': 75000
+};
 
 const LocationMap = ({ location }) => {
   const [selectedState, setSelectedState] = useState(null);
   const [isValid, setIsValid] = useState(true);
 //   For validation
   //location = "California"
+
+  // Function to interpolate between blue and orange based on salary
+  const getColorForSalary = (salary) => {
+    const minSalary = 70000;
+    const maxSalary = 120000;
+    const normalizedSalary = (salary - minSalary) / (maxSalary - minSalary);
+    
+    // Blue to Orange color scale
+    const blue = [0, 0, 255];
+    const orange = [255, 165, 0];
+    
+    const r = Math.round(blue[0] + (orange[0] - blue[0]) * normalizedSalary);
+    const g = Math.round(blue[1] + (orange[1] - blue[1]) * normalizedSalary);
+    const b = Math.round(blue[2] + (orange[2] - blue[2]) * normalizedSalary);
+    
+    return `rgb(${r}, ${g}, ${b})`;
+  };
 
   useEffect(() => {
     if (!location) {
@@ -33,23 +104,45 @@ const LocationMap = ({ location }) => {
     }
   }, [location]);
 
-  // Style function to highlight the matching state.
+  // Style function for the heatmap with selected state highlight
   const stateStyle = (feature) => {
-    const featureName = (feature.properties.name || feature.properties.NAME || '').toLowerCase();
-    const highlighted = selectedState && (featureName === selectedState.toLowerCase());
+    const featureName = feature.properties.name || feature.properties.NAME;
+    const salary = stateSalaries[featureName] || 70000;
+    const color = getColorForSalary(salary);
+    const isSelected = selectedState && featureName.toLowerCase() === selectedState.toLowerCase();
+    
     return {
-      fillColor: highlighted ? '#ff0000' : '#ffffff',
-      weight: highlighted ? 3 : 1,
+      fillColor: color,
+      weight: isSelected ? 3 : 1,
       opacity: 1,
-      color: highlighted ? '#000000' : 'gray',
-      fillOpacity: highlighted ? 0.7 : 0.1,
+      color: isSelected ? '#000000' : 'gray',
+      fillOpacity: 0.7,
+      dashArray: isSelected ? '3' : '0',
     };
   };
 
-  // Optional: bind a popup to each state for additional validation.
+  // Enhanced popup with salary information and comparison
   const onEachState = (feature, layer) => {
     const featureName = feature.properties.name || feature.properties.NAME;
-    layer.bindPopup(featureName);
+    const salary = stateSalaries[featureName] || 70000;
+    const isSelected = selectedState && featureName.toLowerCase() === selectedState.toLowerCase();
+    
+    let comparisonText = '';
+    if (isSelected && selectedState) {
+      const selectedSalary = stateSalaries[selectedState];
+      const nationalAverage = Object.values(stateSalaries).reduce((a, b) => a + b, 0) / Object.keys(stateSalaries).length;
+      const difference = salary - nationalAverage;
+      const percentage = ((difference / nationalAverage) * 100).toFixed(1);
+      const comparison = difference > 0 ? 'above' : 'below';
+      comparisonText = `<br/>Salary is ${Math.abs(percentage)}% ${comparison} national average`;
+    }
+    
+    layer.bindPopup(`
+      <div>
+        <strong>${featureName}</strong><br/>
+        Average Salary: $${salary.toLocaleString()}${comparisonText}
+      </div>
+    `);
   };
 
   return (
