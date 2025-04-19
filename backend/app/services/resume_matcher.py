@@ -202,6 +202,17 @@ def get_top_job_matches(resume_skills: list[str], top_n: int = 10):
             "responsibilities": job.responsibilities,
             "salaryRange": job.salary_range,
             "companyProfile": job.company_profile,
+            "salaryRange": job.salary_range,
+            "country": job.country,
+            "workType": job.work_type,
+            "companySize": job.company_size,
+            "jobPostingDate": job.job_posting_date,
+            "preference": job.preference,
+            "role": job.role,
+            "jobPortal": job.job_portal,
+            "benefits": job.benefits,
+            "responsibilities": job.responsibilities,
+            "companyProfile": job.company_profile,
             "matchScore": round(score, 2),
             "matchedSkills": list(set(resume_skills) & set(job.skills or [])),
             "matchReason": reason_lookup[job.id]
@@ -269,18 +280,28 @@ def get_salary_location_trend(job_title: str):
             continue
 
     db.close()
+    
+    # Merge trends by state
+    for k in list(trends.keys()):
+        if len(k) > 2:
+            state = k[-2:]
+            if state not in trends:
+                trends[state] = []
+            trends[state].extend(trends[k])
+            del trends[k]
+            
+    # calculate the average salary for each state
+    for k in trends.keys():
+        trends[k] = [sum(trends[k]) / len(trends[k])]
+
+    # return the average salary for each state
     return {k: sum(v)/len(v) for k, v in trends.items()}
 
 def get_salary_trend(job_matches: list[dict]):
-    titles = []
-    for match in job_matches:
-        if match["jobTitle"] not in titles:
-            titles.append(match["jobTitle"])
-        if len(titles) >= 3:
-            break
-
     trend = {}
-    for title in titles:
+    for title in job_matches["jobTitle"]:
+        if title in trend:
+            continue
         trend[title] = {
             "progression": get_salary_progression_trend(title),
             "location": get_salary_location_trend(title)
@@ -311,7 +332,6 @@ def process_resume_and_match_jobs(pdf_bytes: bytes) -> dict:
         resume_text = extract_text_from_pdf_bytes(pdf_bytes)
         resume_skills = extract_skills_with_gemini(resume_text)
         matches = get_top_job_matches(resume_skills)
-        # word_cloud = extract_keywords_for_wordcloud(resume_text)
         word_cloud_skills_freq = extract_skills(resume_text)
         salary_trend = get_salary_trend(matches)
 
