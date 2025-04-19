@@ -298,10 +298,13 @@ def get_salary_location_trend(job_title: str):
     return {k: sum(v)/len(v) for k, v in trends.items()}
 
 def get_salary_trend(job_matches: list[dict]):
+    titles = []
+    for match in job_matches:
+        if match["jobTitle"] not in titles:
+            titles.append(match["jobTitle"])
+
     trend = {}
-    for title in job_matches["jobTitle"]:
-        if title in trend:
-            continue
+    for title in titles:
         trend[title] = {
             "progression": get_salary_progression_trend(title),
             "location": get_salary_location_trend(title)
