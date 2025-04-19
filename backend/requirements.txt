@@ -20,3 +20,5 @@ python-dotenv
 wordcloud
 spacy
 nltk
+faker
+tqdm
