@@ -31,7 +31,10 @@ const MainPage = () => {
 
   const [loading, setLoading] = useState(false);
   const [jobIndex, setJobIndex] = useState(0);
-  const [jobs, setJobs] = useState([]);
+  const [jobs, setJobs] = useState([]);         //matches
+  const [resume_skills, setResume_skills] = useState([]);
+  const [word_cloud_skills_freq, setWord_cloud_skills_freq] = useState([]);
+  const [salaryTrends, setSalaryTrends] = useState([]);    
 
   useEffect(() => {
     const sendFileToAPI = async () => {
@@ -57,10 +60,17 @@ const MainPage = () => {
       try {
         const response = await fetchWithTimeout();
         setJobs(response.data.matches); // Or response.data.jobs
+        setResume_skills(response.data.resume_skills); // Or response.data.jobs
+        setWord_cloud_skills_freq(response.data.word_cloud_skills_freq); // Or response.data.jobs
+        setSalaryTrends(response.data.salaryTrend); // Or response.data.jobs
         console.log("API Response:", response.data);
       } catch (error) {
         console.error("API call failed or timed out. Using local fallback.", error);
         setJobs(jobsData.matches); // Load local jobs
+        setResume_skills(jobsData.resume_skills); // Load local jobs
+        setWord_cloud_skills_freq(jobsData.word_cloud_skills_freq); // Load local jobs
+        setSalaryTrends(jobsData.salaryTrend); // Load local jobs
+
       } finally {
         setLoading(false);
       }
