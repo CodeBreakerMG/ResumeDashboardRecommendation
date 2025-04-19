@@ -14,9 +14,9 @@ import JobComparisonChart from '../components/Charts/JobComparisonChart';
 
 import jobsData from "../assets/jobsData.json"; // adjust the path accordingly
 
-const FAST_API_URL = "https://fine-nights-rush.loca.lt/resume/match"
+//const FAST_API_URL = "https://fine-nights-rush.loca.lt/resume/match" //OLD ONE
 
-//const FAST_API_URL =  "https://cloud.cesarsp.com:26000/resume/match"
+const FAST_API_URL =  "https://cloud.cesarsp.com:26000/resume/match"  //NEW ONE
 
 
 //https://cloud.cesarsp.com:26000/docs
