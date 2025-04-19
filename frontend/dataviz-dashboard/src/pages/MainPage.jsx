@@ -14,9 +14,9 @@ import JobComparisonChart from '../components/Charts/JobComparisonChart';
 
 import jobsData from "../assets/jobsData.json"; // adjust the path accordingly
 
-//const FAST_API_URL = "https://fine-nights-rush.loca.lt/resume/match"
+const FAST_API_URL = "https://fine-nights-rush.loca.lt/resume/match"
 
-const FAST_API_URL =  "https://7da2-165-91-13-16.ngrok-free.app/resume/match"
+//const FAST_API_URL =  "https://cloud.cesarsp.com:26000/resume/match"
 
 
 //https://cloud.cesarsp.com:26000/docs
@@ -140,7 +140,7 @@ const MainPage = () => {
         <Grid size={8} paddingX={1}>
           <GraphContainer>
             <Typography variant="h5" gutterBottom>Skill Frequency</Typography>
-            <SkillFrequencyChart jobs={jobs} />
+            <SkillFrequencyChart job={jobs[jobIndex]} jobs={jobs} />
           </GraphContainer>
         </Grid>
         <Grid size={4} paddingX={1}>

@@ -1,10 +1,7 @@
 import React, { useMemo, useRef, useEffect, useState } from 'react';
-import { BarChart } from '@mui/x-charts/BarChart';
-import { axisClasses } from '@mui/x-charts/ChartsAxis';
+import { Box, Tooltip, Typography } from '@mui/material';
 
-const MAX_DISPLAYED_SKILLS = 10
-
-const SkillFrequencyChart = ({ jobs }) => {
+const SkillFrequencyChart = ({ job, jobs }) => {
   const containerRef = useRef(null);
   const [size, setSize] = useState({ width: 400, height: 300 });
 
@@ -12,67 +9,91 @@ const SkillFrequencyChart = ({ jobs }) => {
     const handleResize = () => {
       if (containerRef.current) {
         const { offsetWidth, offsetHeight } = containerRef.current;
-        setSize({
-          width: offsetWidth,
-          height: offsetHeight,
-        });
+        setSize({ width: offsetWidth, height: offsetHeight });
       }
     };
 
-    handleResize(); // initial size
-    window.addEventListener('resize', handleResize); // update on resize
-
+    handleResize(); // Set initial size
+    window.addEventListener('resize', handleResize);
     return () => window.removeEventListener('resize', handleResize);
   }, []);
 
-  const { inverseSortedSkills } = useMemo(() => {
-    const skillCount = {};
-    jobs.forEach(job => {
-      job.skills?.forEach(skill => {
-        skillCount[skill] = (skillCount[skill] || 0) + 1;
+  const { skillCounts, maxCount, allSkills, selectedSet } = useMemo(() => {
+    const counts = {};
+    jobs.forEach(j => {
+      j.skills?.forEach(skill => {
+        counts[skill] = (counts[skill] || 0) + 1;
       });
     });
 
-    const sortedSkills = Object.entries(skillCount)
-      .map(([skill, count]) => ({ skill, count }))
-      .sort((a, b) => b.count - a.count)
-      .slice(0, MAX_DISPLAYED_SKILLS);
+    const selectedSkills = new Set(job?.skills || []);
+    const sortedSkills = Object.entries(counts)
+      .sort(([, a], [, b]) => b - a)
+      .map(([skill]) => skill);
 
-    const inverseSortedSkills = [...sortedSkills].sort((a, b) => a.count - b.count);
-    return { inverseSortedSkills };
-  }, [jobs]);
+    const max = Math.max(...Object.values(counts));
+
+    return {
+      skillCounts: counts,
+      maxCount: max,
+      allSkills: sortedSkills,
+      selectedSet: selectedSkills,
+    };
+  }, [job, jobs]);
+
+  const getColor = (count) => {
+    const intensity = count / maxCount;
+    const red = Math.floor(255 * intensity);
+    return `rgb(${red}, 60, 60)`;
+  };
 
   return (
-    <div ref={containerRef} style={{ width: '99%', height: '90%' }}>
-      <BarChart
-        dataset={inverseSortedSkills}
-        xAxis={[
-          {
-            scaleType: 'band',
-            dataKey: 'skill',
-            tickLabelStyle: {
-              angle: -90,
-              textAnchor: 'end',
-            },
-          },
-        ]}
-        yAxis={[{ label: 'Frequency' }]}
-        series={[
-          {
-            dataKey: 'count',
-           
-            color: '#1976d2',
-          },
-        ]}
-        width={size.width}
-        height={size.height}
+    <Box
+      ref={containerRef}
+      sx={{
+        width: '100%',
+        height: '100%',
+        overflowY: 'auto',
+        padding: 1,
+      }}
+    >
+      <Box
         sx={{
-          [`& .${axisClasses.root}`]: {
-            stroke: '#8884d8',
-          },
+          display: 'grid',
+          gridTemplateColumns: 'repeat(8, 1fr)',
+          gap: 1,
+          width: '100%',
         }}
-      />
-    </div>
+      >
+        {allSkills.map((skill) => {
+          const count = skillCounts[skill];
+          const isSelected = selectedSet.has(skill);
+
+          return (
+            <Tooltip key={skill} title={`${skill}: ${count} occurrence(s)`}>
+              <Box
+                sx={{
+                  height: 60,
+                  backgroundColor: getColor(count),
+                  color: isSelected ? 'white' : 'black',
+                  border: isSelected ? '3px solid #0077ff' : '1px solid #ccc',
+                  borderRadius: 2,
+                  fontWeight: isSelected ? 'bold' : 'normal',
+                  fontSize: '0.85rem',
+                  display: 'flex',
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                  textAlign: 'center',
+                  padding: '6px',
+                }}
+              >
+                {skill}
+              </Box>
+            </Tooltip>
+          );
+        })}
+      </Box>
+    </Box>
   );
 };
 
