@@ -60,7 +60,7 @@ const MainPage = () => {
         console.log("API Response:", response.data);
       } catch (error) {
         console.error("API call failed or timed out. Using local fallback.", error);
-        setJobs(jobsData); // Load local jobs
+        setJobs(jobsData.matches); // Load local jobs
       } finally {
         setLoading(false);
       }
