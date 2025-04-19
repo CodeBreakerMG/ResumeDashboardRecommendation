@@ -44,7 +44,7 @@ const GraphContainer = ({ children }) => {
           elevation={4}
           sx={{
             position: 'relative',
-            height: 430,
+            height: 400,
             p: 4,
             borderRadius: 4,
             display: 'flex',

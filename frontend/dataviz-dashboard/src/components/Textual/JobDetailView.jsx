@@ -10,16 +10,7 @@ const JobDetailView = ({ job }) => {
 */
 //    <Paper elevation={2} sx={{ p: 4, maxWidth: "100%", borderRadius: 4 }}>
 return (
-  <Paper
-    sx={{
-      height: 1020,
-      overflowY: 'auto',
-      p: 2,
-      border: '1px solid #ccc',
-      borderRadius: 4
-    }}
-    elevation={3}
-  >
+  <Box>
     {/* Job Header */}
     <Typography variant="h5" fontWeight="bold">
       {job.jobTitle}
@@ -73,7 +64,7 @@ return (
       <Typography><strong>Contact Person :</strong>{job.companyProfile.contacPerson} • {job.companyProfile.contact}</Typography>
       <Typography><strong>City:</strong> {job.companyProfile.City}</Typography>
     </Box>
-  </Paper>
+  </Box>
 );
 };
 

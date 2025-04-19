@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'; //This is the React Base module
-import { Stack, Box, Grid, Typography, Button  } from '@mui/material'; //Base Material UI Components https://mui.com/material-ui/react-box/
+import { Stack, Box, Grid, Typography, Button, Paper  } from '@mui/material'; //Base Material UI Components https://mui.com/material-ui/react-box/
 import { useLocation } from 'react-router-dom';
 import axios from 'axios';
 
@@ -100,29 +100,43 @@ const MainPage = () => {
     ) : jobs.length > 0 ? (
       <Grid container spacing={2}>
         <AppBarTip filename={fileName} file={uploadedFile} />
-      <Grid size={12}>
- 
-
-    <Typography sx={{ fontFamily: 'Flexo', fontWeight: 700,  color: 'var(--color-newblue)' }}>{fileName}</Typography>
-    </Grid>
-      <Grid size={4}>
-        <JobDetailView job={jobs[jobIndex]} />
-        <Stack direction="row" spacing={2} mt={2} justifyContent="center">
-          <Button variant="outlined" onClick={handlePrevious}>Previous</Button>
-          <Button variant="contained" onClick={handleNext}>Next</Button>
-        </Stack>
+        <Grid size={12}>
+        </Grid>
+      <Grid size={5}>
+        <Paper
+            sx={{
+              height: '97%',
+              overflowY: 'auto',
+              p: 2,
+              border: '1px solid #ccc',
+              borderRadius: 4
+            }}
+            elevation={3}
+          >
+          <JobDetailView job={jobs[jobIndex]} />
+          <Stack direction="row" spacing={2} mt={2} justifyContent="center">
+            <Button variant="outlined" onClick={handlePrevious}>Previous</Button>
+            <Button variant="contained" onClick={handleNext}>Next</Button>
+          </Stack>
+        </Paper>
       </Grid>
-      <Grid size={8} container>
-        <Grid size={4} paddingX={1}>
+      <Grid size={7} container>
+        <Grid size={6} paddingX={1}>
           <GraphContainer>
             <Typography variant="h5" gutterBottom>Experience & Salary Comparison</Typography>
             <JobComparisonChart job={jobs[jobIndex]} jobs={jobs} />
           </GraphContainer>
         </Grid>
-        <Grid size={4} paddingX={1}>
+        <Grid size={6} paddingX={1}>
           <GraphContainer>
             <Typography variant="h5">Location</Typography>
             <LocationMap location={jobs[jobIndex].location}/>
+          </GraphContainer>
+        </Grid>
+        <Grid size={8} paddingX={1}>
+          <GraphContainer>
+            <Typography variant="h5" gutterBottom>Skill Frequency</Typography>
+            <SkillFrequencyChart jobs={jobs} />
           </GraphContainer>
         </Grid>
         <Grid size={4} paddingX={1}>
@@ -131,22 +145,7 @@ const MainPage = () => {
             <JobBenefitsRadarChart job={jobs[jobIndex]} jobs={jobs} />
           </GraphContainer>
         </Grid>
-        <Grid size={4} paddingX={1}>
-          <GraphContainer>
-            <Typography variant="h5" gutterBottom>Skill Frequency</Typography>
-            <SkillFrequencyChart jobs={jobs} />
-          </GraphContainer>
-        </Grid>
-        <Grid size={4} paddingX={1}>
-          <GraphContainer>
-            <Typography variant="h5" gutterBottom>Graph</Typography>
-          </GraphContainer>
-        </Grid>
-        <Grid size={4} paddingX={1}>
-          <GraphContainer>
-            <Typography variant="h5" gutterBottom>Graph</Typography>
-          </GraphContainer>
-        </Grid>
+
       </Grid>
     </Grid>
     ) : (

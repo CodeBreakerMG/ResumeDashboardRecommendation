@@ -27,6 +27,13 @@ const AppBarTip = ({ filename = "Unknown.nothing", file = null } = {}) => {
     <Box sx={{ flexGrow: 1 }}>
       <AppBar position="static">
         <Toolbar>
+          <Typography
+            variant="h5"
+            component="div"
+            sx={{ flexGrow: 1, display: { xs: 'none', sm: 'block' }, fontWeight: 'bold'}}
+          >
+            Resume Parser
+          </Typography>
           <Typography variant="h6" component="div">
             {filename}
           </Typography>
@@ -50,3 +57,6 @@ const AppBarTip = ({ filename = "Unknown.nothing", file = null } = {}) => {
 
 
 export default AppBarTip;
+
+
+ // 👈 This makes it bold
