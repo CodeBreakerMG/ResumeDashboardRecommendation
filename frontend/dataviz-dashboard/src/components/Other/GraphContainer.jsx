@@ -23,7 +23,7 @@ const GraphContainer = ({ children }) => {
           }}
         >
           {/* Close (X) Button */}
-          <Box sx={{ position: 'absolute', top: 16, right: 48 }}>
+          <Box sx={{ position: 'absolute', top: 16, right: 60 }}>
             <IconButton
               onClick={() => setIsExpanded(false)}
               sx={{ color: 'black' }}

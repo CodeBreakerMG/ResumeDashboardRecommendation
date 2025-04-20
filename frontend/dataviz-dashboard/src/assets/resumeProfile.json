@@ -1,0 +1,84 @@
+{
+  "resumeProfile": {
+    "name": "Manuel Moran",
+    "totalYearsExperience": 4,
+    "totalYearsEducation": 6,
+    "latestExperienceTitle": "Senior Financial Data Analyst",
+    "latestEducationLevel": "Masters",
+    "experienceByDomain": {
+      "Data Science": 2,
+      "Software Development": 3
+    },
+    "pastEmployers": [
+      "Bank of Credit of Peru",
+      "Pontifical Catholic University of Peru"
+    ],
+    "education": [
+      {
+        "educationTitle": "Bachelor of Science in Informatics Engineering",
+        "institution": "Pontifical Catholic University of Peru",
+        "startYear": 2018,
+        "endYear": 2022,
+        "level": "Bachelor's",
+        "degree": "B.Sc."
+      },
+      {
+        "educationTitle": "Master of Science in Computer Science",
+        "institution": "Texas A&M University",
+        "startYear": 2024,
+        "endYear": 2026,
+        "level": "Masters",
+        "degree": "M.Sc."
+      }
+    ],
+    "experience": [
+      {
+        "experienceTitle": "Financial Analyst Intern",
+        "company": "Bank of Credit of Peru",
+        "industry": "Banking",
+        "role": "Financial Analysis",
+        "position": "Intern",
+        "startYear": 2022,
+        "endYear": 2022,
+        "description": "Assisted in performance reporting and forecasting of banking products."
+      },
+      {
+        "experienceTitle": "Junior Financial Data Analyst",
+        "company": "Bank of Credit of Peru",
+        "industry": "Banking",
+        "role": "Data Analytics",
+        "position": "Junior Analyst",
+        "startYear": 2023,
+        "endYear": 2023,
+        "description": "Developed dashboards and optimized SQL queries to monitor key product KPIs."
+      },
+      {
+        "experienceTitle": "Senior Financial Data Analyst",
+        "company": "Bank of Credit of Peru",
+        "industry": "Banking",
+        "role": "Data Engineering",
+        "position": "Senior Analyst",
+        "startYear": 2023,
+        "endYear": 2024,
+        "description": "Automated P&L reporting processes and implemented client-level cost models."
+      },
+      {
+        "experienceTitle": "Undergraduate Teaching Assistant",
+        "company": "Pontifical Catholic University of Peru",
+        "industry": "Education",
+        "role": "Teaching",
+        "position": "TA",
+        "startYear": 2023,
+        "endYear": 2023,
+        "description": "Supported course delivery and grading for software engineering classes."
+      }
+    ],
+    "industriesWorkedIn": [
+      "Banking",
+      "Education",
+      "Technology"
+    ],
+    "publications": 2,
+    "patents": 0
+  }
+}

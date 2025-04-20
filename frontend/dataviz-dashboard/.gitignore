@@ -25,3 +25,6 @@ yarn-error.log*
 
 #CSV Files
 /src/data/job_descriptions_sampled_5PERCENT.csv
+/src/data/JOBDATASET_SENTTO_CESAR_V1_2.csv
+/src/data/JOBDATASET_SENTTO_CESAR_V1.csv
+/src/data/JOBDATASET_SENTTO_CESAR_V2.csv

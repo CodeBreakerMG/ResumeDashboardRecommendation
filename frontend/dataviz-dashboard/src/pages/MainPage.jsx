@@ -16,8 +16,6 @@ import jobsData from "../assets/jobsData.json"; // adjust the path accordingly
 
 //const FAST_API_URL = "https://fine-nights-rush.loca.lt/resume/match" //OLD ONE
 
-const FAST_API_URL =  "https://cloud.cesarsp.com:26000/resume/match"  //NEW ONE
-
 
 //https://cloud.cesarsp.com:26000/docs
 
@@ -124,28 +122,7 @@ const MainPage = () => {
     ) : jobs.length > 0 ? (
       <Grid container spacing={2}>
         <AppBarTip filename={fileName} file={uploadedFile} />
-        <Grid size={12}>
-        </Grid>
-      <Grid size={5}>
-        <Paper
-            sx={{
-              height: '97%',
-              overflowY: 'auto',
-              p: 2,
-              border: '1px solid #ccc',
-              borderRadius: 4
-            }}
-            elevation={3}
-          >
-          <JobDetailView job={jobs[jobIndex]} />
-          <Stack direction="row" spacing={2} mt={2} justifyContent="center">
-            <Button variant="outlined" onClick={handlePrevious}>Previous</Button>
-            <Button variant="contained" onClick={handleNext}>Next</Button>
-          </Stack>
-        </Paper>
       </Grid>
-      <Grid size={7} container>
-        <Grid size={6} paddingX={1}>
           <GraphContainer>
             <Typography variant="h5" gutterBottom color="secondary">Experience & Salary Comparison</Typography>
             {(() => {

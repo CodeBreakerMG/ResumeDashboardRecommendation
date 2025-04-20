@@ -20,17 +20,17 @@ const companyName = job.company != null ? job.company : 'ExampleCompany';
 
 //FirstBody - Core Info
 const experience = job.experience != null ? job.experience : '0 to 1 Year';
-const qualifications = job.qualifications != null ? job.experience : 'NOT_RETRIEVED';
+const qualifications = job.qualifications != null ? job.qualifications : 'NOT_RETRIEVED';
 const salaryRange = job.salaryRange != null ? job.salaryRange : '0K$';
-const workType = job.workType != null ? job.workType : '0K$';
-const jobPostingDate = job.jobPostingDate != null ? job.jobPostingDate : '0K$';
-const role = job.role != null ? job.role : '0K$';
-const preference = job.preference != null ? job.preference : 'OnSite';
+const workType = job.workType != null ? job.workType : 'NOT_DEFINED';
+const jobPostingDate = job.jobPostingDate != null ? job.jobPostingDate : '1/1/1900';
+const role = job.role != null ? job.role : 'NOT_DEFINED';
+const preference = job.preference != null ? job.preference : 'NOT_DEFINED';
 
 //SecondBODY Skills, Job Description and Responsibilities
 const skills = job.skills != null ? job.skills : ['Skill1', 'Skill2'];
 const jobDescription = job.jobDescription != null ? job.jobDescription : 'NO DESCRIPTION';
-const responsibilities = job.responsibilities != null ? job.responsibilities : '0K$';
+const responsibilities = job.responsibilities != null ? job.responsibilities : 'NOT_DEFINED';
  
 //Company Profile
 const companySector    = job.companyProfile.Sector != null ? job.companyProfile.Sector : 'NO SECTOR';
