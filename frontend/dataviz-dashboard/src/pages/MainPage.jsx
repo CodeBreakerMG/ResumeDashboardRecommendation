@@ -11,11 +11,18 @@ import LocationMap from '../components/Charts/LocationMap';
 import SkillFrequencyChart from '../components/Charts/SkillFrequencyChart';
 import JobBenefitsRadarChart from '../components/Charts/JobBenefitsRadarChart';
 import JobComparisonChart from '../components/Charts/JobComparisonChart';
+import MatchScoreChart from '../components/Charts/MatchScoreChart';
+import SkillWordCloud from '../components/Charts/SkillWordCloud';
+import ResumeSummary from '../components/Textual/ResumeSummary';
+
+
 
 import jobsData from "../assets/jobsData.json"; // adjust the path accordingly
 
 //const FAST_API_URL = "https://fine-nights-rush.loca.lt/resume/match" //OLD ONE
 
+//const FAST_API_URL =  "https://cloud.cesarsp.com:26000/resume/match"  //NEW ONE
+const FAST_API_URL =  "https://cac2-172-103-86-169.ngrok-free.app/resume/match"
 
 //https://cloud.cesarsp.com:26000/docs
 
@@ -90,6 +97,25 @@ const MainPage = () => {
     setJobIndex((prev) => (prev - 1 >= 0 ? prev - 1 : jobs.length - 1));
   };
 
+  const parseYears = (exp) => {
+    if (!exp) return [0, 0];
+    const nums = exp.match(/\d+/g)?.map(Number);
+    return nums?.length === 2 ? [nums[0], nums[1]] : [nums?.[0] ?? 0, nums?.[0] ?? 0];
+  };
+  
+  
+/*
+  <ResumeSummary
+  resumeSkills={resume_skills}
+  summary={{
+    name: "John Doe", // Replace with parsed name
+    title: "Computer Science Graduate",
+    numJobs: 3,
+    yearsOfExperience: 2.5
+  }}
+/>  
+*/
+
  return (
   <>
     {loading ? (
@@ -122,7 +148,39 @@ const MainPage = () => {
     ) : jobs.length > 0 ? (
       <Grid container spacing={2}>
         <AppBarTip filename={fileName} file={uploadedFile} />
+   
+        <Grid size={12} />
+        <Grid size={4} container>
+                <Paper
+                    sx={{
+                      height: '97%',
+                      overflowY: 'auto',
+                      p: 2,
+                      border: '1px solid #ccc',
+                      borderRadius: 4
+                    }}
+                    elevation={3}
+                  >
+                  <JobDetailView job={jobs[jobIndex]} />
+                  <Stack direction="row" spacing={2} mt={2} justifyContent="center">
+                    <Button variant="outlined" onClick={handlePrevious}>Previous</Button>
+                    <Button variant="contained" onClick={handleNext}>Next</Button>
+                  </Stack>
+                </Paper>
       </Grid>
+      <Grid size={8} container>
+      <Grid size={4} paddingX={1}>
+          <GraphContainer>
+            <Typography variant="h5" gutterBottom>Match Score</Typography>
+              <MatchScoreChart
+                overall={100*jobs[jobIndex].matchScore}
+                experience={100}
+                skill={86}
+                industry={33}
+              />
+          </GraphContainer>
+        </Grid>
+        <Grid size={4} paddingX={1}>
           <GraphContainer>
             <Typography variant="h5" gutterBottom color="secondary">Experience & Salary Comparison</Typography>
             {(() => {
@@ -136,6 +194,7 @@ const MainPage = () => {
           })()}
           </GraphContainer>
         </Grid>
+<<<<<<< Updated upstream
         <Grid size={6} paddingX={1}>
           
         <GraphContainer>
@@ -155,6 +214,13 @@ const MainPage = () => {
              );
            })()}
          </GraphContainer>
+=======
+        <Grid size={4} paddingX={1}>
+          <GraphContainer>
+            <Typography variant="h5">Location</Typography>
+            <LocationMap location={jobs[jobIndex].location}/>
+          </GraphContainer>
+>>>>>>> Stashed changes
         </Grid>
         <Grid size={8} paddingX={1}>
           <GraphContainer>
