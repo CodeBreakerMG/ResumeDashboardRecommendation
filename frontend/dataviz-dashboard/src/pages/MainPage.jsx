@@ -170,6 +170,8 @@ const MainPage = () => {
       </Grid>
       <Grid size={8} container>
       <Grid size={4} paddingX={1}>
+<<<<<<< Updated upstream
+=======
           <GraphContainer>
             <Typography variant="h5" gutterBottom>Match Score</Typography>
               <MatchScoreChart
@@ -181,6 +183,19 @@ const MainPage = () => {
           </GraphContainer>
         </Grid>
         <Grid size={4} paddingX={1}>
+>>>>>>> Stashed changes
+          <GraphContainer>
+            <Typography variant="h5" gutterBottom>Match Score</Typography>
+              <MatchScoreChart
+                overall={100*jobs[jobIndex].matchScore}
+                experience={100}
+                skill={86}
+                industry={33}
+              />
+          </GraphContainer>
+        </Grid>
+        <Grid size={4} paddingX={1}>
+<<<<<<< Updated upstream
           <GraphContainer>
             <Typography variant="h5" gutterBottom color="secondary">Experience & Salary Comparison</Typography>
             {(() => {
@@ -216,6 +231,8 @@ const MainPage = () => {
          </GraphContainer>
 =======
         <Grid size={4} paddingX={1}>
+=======
+>>>>>>> Stashed changes
           <GraphContainer>
             <Typography variant="h5">Location</Typography>
             <LocationMap location={jobs[jobIndex].location}/>
