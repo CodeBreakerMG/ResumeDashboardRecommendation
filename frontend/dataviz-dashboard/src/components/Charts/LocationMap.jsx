@@ -1,187 +1,148 @@
-import React, { useState, useEffect } from 'react';
+// src/components/Charts/LocationMap.jsx
+import React, { useState, useEffect, useMemo } from 'react';
 import { MapContainer, TileLayer, GeoJSON } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
-import usStatesData from '../../assets/us-states.json'; // Adjust the path based on your project structure
+import usStatesData from '../../assets/us-states.json';
 
-// Default center coordinate (geographic center of the contiguous US)
 const defaultCenter = [39.8283, -98.5795];
 
-// For Validation
-const stateSalaries = {
-  'California': 120000,
-  'New York': 110000,
-  'Texas': 90000,
-  'Florida': 85000,
-  'Illinois': 95000,
-  'Pennsylvania': 88000,
-  'Ohio': 82000,
-  'Georgia': 85000,
-  'North Carolina': 83000,
-  'Michigan': 85000,
-  'New Jersey': 105000,
-  'Virginia': 95000,
-  'Washington': 100000,
-  'Arizona': 85000,
-  'Massachusetts': 110000,
-  'Tennessee': 80000,
-  'Indiana': 80000,
-  'Missouri': 80000,
-  'Maryland': 95000,
-  'Wisconsin': 82000,
-  'Minnesota': 90000,
-  'Colorado': 95000,
-  'Alabama': 75000,
-  'South Carolina': 78000,
-  'Louisiana': 75000,
-  'Kentucky': 75000,
-  'Oregon': 90000,
-  'Oklahoma': 75000,
-  'Connecticut': 95000,
-  'Utah': 85000,
-  'Iowa': 80000,
-  'Nevada': 85000,
-  'Arkansas': 75000,
-  'Mississippi': 70000,
-  'Kansas': 80000,
-  'New Mexico': 75000,
-  'Nebraska': 80000,
-  'West Virginia': 70000,
-  'Idaho': 75000,
-  'Hawaii': 90000,
-  'New Hampshire': 85000,
-  'Maine': 80000,
-  'Rhode Island': 85000,
-  'Montana': 75000,
-  'Delaware': 85000,
-  'South Dakota': 75000,
-  'North Dakota': 75000,
-  'Alaska': 90000,
-  'Vermont': 80000,
-  'Wyoming': 75000
+const nameToAbbr = {
+  'Alabama': 'AL', 'Alaska': 'AK', 'Arizona': 'AZ', 'Arkansas': 'AR',
+  'California': 'CA', 'Colorado': 'CO', 'Connecticut': 'CT',
+  'Delaware': 'DE', 'Florida': 'FL', 'Georgia': 'GA',
+  'Hawaii': 'HI', 'Idaho': 'ID', 'Illinois': 'IL',
+  'Indiana': 'IN', 'Iowa': 'IA', 'Kansas': 'KS',
+  'Kentucky': 'KY', 'Louisiana': 'LA', 'Maine': 'ME',
+  'Maryland': 'MD', 'Massachusetts': 'MA', 'Michigan': 'MI',
+  'Minnesota': 'MN', 'Mississippi': 'MS', 'Missouri': 'MO',
+  'Montana': 'MT', 'Nebraska': 'NE', 'Nevada': 'NV',
+  'New Hampshire': 'NH', 'New Jersey': 'NJ', 'New Mexico': 'NM',
+  'New York': 'NY', 'North Carolina': 'NC', 'North Dakota': 'ND',
+  'Ohio': 'OH', 'Oklahoma': 'OK', 'Oregon': 'OR',
+  'Pennsylvania': 'PA', 'Rhode Island': 'RI', 'South Carolina': 'SC',
+  'South Dakota': 'SD', 'Tennessee': 'TN', 'Texas': 'TX',
+  'Utah': 'UT', 'Vermont': 'VT', 'Virginia': 'VA',
+  'Washington': 'WA', 'West Virginia': 'WV', 'Wisconsin': 'WI',
+  'Wyoming': 'WY'
 };
 
-const LocationMap = ({ location }) => {
+export default function LocationMap({ location, stateSalaryData = {} }) {
   const [selectedState, setSelectedState] = useState(null);
-  const [isValid, setIsValid] = useState(true);
-//   For validation
-  //location = "California"
+  const [hasValidated, setHasValidated]   = useState(false);
 
-  // Function to interpolate between blue and orange based on salary
-  const getColorForSalary = (salary) => {
-    const minSalary = 70000;
-    const maxSalary = 120000;
-    const normalizedSalary = (salary - minSalary) / (maxSalary - minSalary);
-    
-    // Blue to Orange color scale
-    const blue = [0, 0, 255];
-    const orange = [255, 165, 0];
-    
-    const r = Math.round(blue[0] + (orange[0] - blue[0]) * normalizedSalary);
-    const g = Math.round(blue[1] + (orange[1] - blue[1]) * normalizedSalary);
-    const b = Math.round(blue[2] + (orange[2] - blue[2]) * normalizedSalary);
-    
-    return `rgb(${r}, ${g}, ${b})`;
-  };
+  const [minVal, maxVal] = useMemo(() => {
+    const vals = Object.values(stateSalaryData);
+    return vals.length
+      ? [Math.min(...vals), Math.max(...vals)]
+      : [0, 1];
+  }, [stateSalaryData]);
 
   useEffect(() => {
-    if (!location) {
-      setSelectedState(null);
-      setIsValid(false);
-      return;
-    }
-    const locationLower = location.trim().toLowerCase();
-    // Check if any state in the GeoJSON data matches the provided location.
-    const found = usStatesData.features.some((feature) => {
-      const featureName = (feature.properties.name || feature.properties.NAME || '').toLowerCase();
-      return featureName === locationLower;
-    });
-    if (found) {
-      setSelectedState(location);
-      setIsValid(true);
-    } else {
-      setSelectedState(null);
-      setIsValid(false);
-    }
-  }, [location]);
+    if (!location) return;
+    const parts = location.split(',').map(s => s.trim().toUpperCase());
+    const code  = parts[parts.length - 1];
+    setSelectedState(stateSalaryData.hasOwnProperty(code) ? code : null);
+    setHasValidated(true);
+  }, [location, stateSalaryData]);
 
-  // Style function for the heatmap with selected state highlight
-  const stateStyle = (feature) => {
-    const featureName = feature.properties.name || feature.properties.NAME;
-    const salary = stateSalaries[featureName] || 70000;
-    const color = getColorForSalary(salary);
-    const isSelected = selectedState && featureName.toLowerCase() === selectedState.toLowerCase();
-    
+  const getColorForSalary = salary => {
+    let norm = (salary - minVal) / (maxVal - minVal);
+    norm = Math.max(0, Math.min(1, norm));
+    const blue = [0, 0, 255], orange = [255, 165, 0];
+    const rgb  = blue.map((c, i) =>
+      Math.round(c + (orange[i] - c) * norm)
+    );
+    return `rgb(${rgb.join(',')})`;
+  };
+
+  const styleFeature = feature => {
+    const fullName = feature.properties.name;
+    const abbr     = nameToAbbr[fullName];
+    const salary   = stateSalaryData[abbr];
+    const isSel    = abbr === selectedState;
     return {
-      fillColor: color,
-      weight: isSelected ? 3 : 1,
-      opacity: 1,
-      color: isSelected ? '#000000' : 'gray',
-      fillOpacity: 0.7,
-      dashArray: isSelected ? '3' : '0',
+      fillColor:   salary != null ? getColorForSalary(salary) : '#ccc',
+      fillOpacity: salary != null ? 0.7 : 0.3,
+      weight:      isSel ? 3 : 1,
+      color:       isSel ? '#000' : '#666',
+      dashArray:   isSel ? '4' : ''
     };
   };
 
-  // Enhanced popup with salary information and comparison
-  const onEachState = (feature, layer) => {
-    const featureName = feature.properties.name || feature.properties.NAME;
-    const salary = stateSalaries[featureName] || 70000;
-    const isSelected = selectedState && featureName.toLowerCase() === selectedState.toLowerCase();
-    
-    let comparisonText = '';
-    if (isSelected && selectedState) {
-      const selectedSalary = stateSalaries[selectedState];
-      const nationalAverage = Object.values(stateSalaries).reduce((a, b) => a + b, 0) / Object.keys(stateSalaries).length;
-      const difference = salary - nationalAverage;
-      const percentage = ((difference / nationalAverage) * 100).toFixed(1);
-      const comparison = difference > 0 ? 'above' : 'below';
-      comparisonText = `<br/>Salary is ${Math.abs(percentage)}% ${comparison} national average`;
-    }
-    
-    layer.bindPopup(`
-      <div>
-        <strong>${featureName}</strong><br/>
-        Average Salary: $${salary.toLocaleString()}${comparisonText}
-      </div>
-    `);
+  const onEach = (feature, layer) => {
+    const name   = feature.properties.name;
+    const abbr   = nameToAbbr[name];
+    const sal    = stateSalaryData[abbr];
+    const isSel  = abbr === selectedState;
+
+    let html = `<strong>${name} (${abbr})</strong><br/>`;
+    html += sal != null
+      ? `Avg: \$${(sal * 1000).toLocaleString()}`
+      : 'No data';
+    if (isSel) html += '<br/><em>(current job)</em>';
+
+    layer.bindPopup(html);
+    layer.on({
+      mouseover: () => layer.openPopup(),
+      mouseout:  () => layer.closePopup()
+    });
   };
 
   return (
     <div style={{ position: 'relative', height: '100%' }}>
-      <MapContainer center={defaultCenter} zoom={4} style={{ width: '100%', height: '80%' }}>
+      <MapContainer
+        center={defaultCenter}
+        zoom={4}
+        style={{ width: '100%', height: '80%' }}
+      >
         <TileLayer
-          attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+          attribution='&copy; OpenStreetMap'
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
         />
-        <GeoJSON data={usStatesData} style={stateStyle} onEachFeature={onEachState} />
+        <GeoJSON
+          data={usStatesData}
+          style={styleFeature}
+          onEachFeature={onEach}
+        />
       </MapContainer>
-      
-      {/* Validation */}
-      {/* <div
-        style={{
-          padding: '10px',
-          textAlign: 'center',
-          backgroundColor: '#f0f0f0',
-          borderTop: '1px solid #ccc',
-          height: '20%',
-        }}
-      >
-        <h4>Location Validation</h4>
-        <p>
-          Provided Location: <strong>{location || 'None provided'}</strong>
-        </p>
-        {!isValid && location && (
-          <p style={{ color: 'red' }}>
-            The location &quot;{location}&quot; is not a valid US state.
-          </p>
-        )}
-        {isValid && selectedState && (
-          <p style={{ color: 'green' }}>
-            The location &quot;{selectedState}&quot; was found and is highlighted on the map.
-          </p>
-        )}
-      </div> */}
+
+      {/* Legend */}
+      <div style={{
+        position: 'absolute',
+        bottom: 10,
+        left: '50%',
+        transform: 'translateX(-50%)',
+        width: '70%',
+        background: 'white',
+        padding: '8px',
+        borderRadius: '4px',
+        boxShadow: '0 0 6px rgba(0,0,0,0.3)',
+        fontSize: '0.85rem',
+        zIndex: 1000,
+        textAlign: 'center'
+      }}>
+        <div style={{ marginBottom: 4 }}>Salary scale</div>
+        <div style={{
+          width: '100%',
+          height: 12,
+          background: 'linear-gradient(to right, rgb(0,0,255), rgb(255,165,0))',
+          margin: '0 auto 4px'
+        }} />
+        <div style={{
+          display: 'flex',
+          justifyContent: 'space-between',
+          padding: '0 4px'
+        }}>
+          <span>{minVal.toFixed(1)}k</span>
+          <span>{maxVal.toFixed(1)}k</span>
+        </div>
+      </div>
+
+      {hasValidated && selectedState === null && (
+        <div style={{ padding: 8, color: 'red' }}>
+          “{location}” has no salary data
+        </div>
+      )}
     </div>
   );
-};
-
-export default LocationMap;
+}

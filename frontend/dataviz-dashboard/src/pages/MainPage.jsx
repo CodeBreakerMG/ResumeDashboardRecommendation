@@ -160,10 +160,24 @@ const MainPage = () => {
           </GraphContainer>
         </Grid>
         <Grid size={6} paddingX={1}>
-          <GraphContainer>
-            <Typography variant="h5" color="secondary">Location</Typography>
-            <LocationMap location={jobs[jobIndex].location}/>
-          </GraphContainer>
+          
+        <GraphContainer>
+           <Typography variant="h5" color="secondary">Location</Typography>
+           {(() => {
+             const title        = jobs[jobIndex]?.jobTitle;
+             const stateData    = salaryTrends[title]?.location || {};
+             const fullLocation = jobs[jobIndex].location;
+             console.log("🏷️ [MainPage] passing to LocationMap:", {
+               title, fullLocation, stateData
+             });
+             return (
+               <LocationMap
+                 location={fullLocation}
+                 stateSalaryData={stateData}
+               />
+             );
+           })()}
+         </GraphContainer>
         </Grid>
         <Grid size={8} paddingX={1}>
           <GraphContainer>
