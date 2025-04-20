@@ -1,27 +1,13 @@
-import React, { useMemo, useRef, useEffect, useState } from 'react';
+// JobComparisonChart.jsx
+import React, { useRef, useEffect, useState, useMemo } from 'react';
 import { LineChart } from '@mui/x-charts/LineChart';
-import { Grid } from '@mui/material';
+import { Grid, Typography } from '@mui/material';
 
-const parseYears = exp => {
-  if (!exp) return 0;
-  const nums = exp.match(/\d+/g)?.map(Number);
-  return nums?.length === 2 ? (nums[0] + nums[1]) / 2 : nums?.[0] ?? 0;
-};
-
-const parseSalary = sal => {
-  if (!sal) return 0;
-  const text = sal.toLowerCase();
-  const isHr = /hour|hr|\$\/hr/.test(text);
-  const nums = sal.match(/\d+/g)?.map(Number);
-  if (!nums) return 0;
-  const base = nums.length === 2 ? (nums[0] + nums[1]) / 2 : nums[0];
-  return isHr ? base * 40 * 52 : base;
-};
-
-export default function JobComparisonChart({ job, jobs }) {
+export default function JobComparisonChart({ progression }) {
   const ref = useRef();
   const [size, setSize] = useState({ width: 400, height: 300 });
 
+  // responsive container
   useEffect(() => {
     const onResize = () => {
       if (!ref.current) return;
@@ -35,102 +21,73 @@ export default function JobComparisonChart({ job, jobs }) {
     return () => window.removeEventListener('resize', onResize);
   }, []);
 
-  const { buckets, avgSalaries, selectedLine } = useMemo(() => {
-    const buckets = [1, 2, 3, 4, 5, 6];
-    const groups = Object.fromEntries(buckets.map(b => [b, { sum: 0, count: 0 }]));
+  
+  const { years, salaries } = useMemo(() => {
+    if (!progression) return { years: [], salaries: [] };
+    const pts = Object.entries(progression)
+      .map(([yr, sal]) => [parseFloat(yr), parseFloat(sal)])
+      .sort(([a], [b]) => a - b);
+    return {
+      years: pts.map(([y]) => y),
+      salaries: pts.map(([, s]) => s),
+    };
+  }, [progression]);
 
-    jobs.forEach(j => {
-      const yrs = parseYears(j.experience);
-      const b = Math.round(yrs);
-      if (groups[b]) {
-        const s = parseSalary(j.salaryRange);
-        if (!isNaN(s)) {
-          groups[b].sum += s;
-          groups[b].count += 1;
-        }
-      }
-    });
+  const chartW = size.width;
+  const chartH = size.height;
 
-    const avgSalaries = buckets.map(b =>
-      groups[b].count ? groups[b].sum / groups[b].count : 0
-    );
-
-    const jobBucket = Math.round(parseYears(job?.experience));
-    const jobSal    = parseSalary(job?.salaryRange);
-    const selectedLine = buckets.map(b => (b === jobBucket ? jobSal : null));
-
-    return { buckets, avgSalaries, selectedLine };
-  }, [jobs, job]);
-
-  const chartSize = { width: size.width * 0.8, height: size.height * 0.6 };
+  if (!years.length) {
+    return <Typography>No salary trend data available.</Typography>;
+  }
 
   return (
     <div
       ref={ref}
-      style={{
-        width: '100%',
-        height: '100%',
-        display: 'flex',
-        justifyContent: 'center',
-        alignItems: 'center',
-      }}
+      style={{ width: '100%', height: '100%', display: 'flex',
+               justifyContent: 'center', alignItems: 'center' }}
     >
       <Grid container>
         <LineChart
-          width={chartSize.width}
-          height={chartSize.height}
-          margin={{ top: 80, right: 20, bottom: 20, left: 50 }}
-          curve="monotoneX"                      // smooth curve
-          grid={{
-            vertical: true,
-            horizontal: false,                  // turn off horizontal grid
-            stroke: '#eee',                     // very light grid
-          }}
+          width={chartW}
+          height={chartH}
+          margin={{ top: 40, right: 20, bottom: 50, left: 40 }}
+          curve="monotoneX"
+          grid={{ vertical: true, horizontal: true, stroke: '#eee' }}
+          slotProps={{ tooltip: { trigger: 'axis' } }}
           xAxis={[{
-            data: buckets,
+            type: 'number',
+            data: years,
             label: 'Years of Experience',
-            tickInterval: 1,
-            min: 1,
-            max: 6,
-            position: 'top',
-            axisLine: { stroke: '#ccc' },
-            tickSize: 4,
-            tickColor: '#999',
-            tickLabelProps: () => ({ fill: '#666', fontSize: 11 }),
+            position: 'bottom',
+            valueFormatter: (v, context) =>
+              context.location === 'tooltip'
+                ? `Years of experience: ${v} years`
+                : (Number.isInteger(v) ? `${v}` : ''),
+            tickLabelProps: () => ({ fontSize: 11 }),
           }]}
-          yAxis={[{
-            label: 'Annual Salary ($)',
-            valueFormatter: v => `$${v.toLocaleString()}`,
-            min: 0,
-            tickInterval: 20000,
-            axisLine: { stroke: '#ccc' },
-            tickSize: 4,
-            tickColor: '#999',
-            tickLabelProps: () => ({ fill: '#666', fontSize: 11 }),
-          }]}
-          legendPosition="top-right"             // move legend out of the way
+          yAxis={[
+               {
+                type: 'number',
+                 label: 'Salary (k)',
+                 // ← shove the label 10px to the left
+                 labelStyle: { dx: -10 },
+                 valueFormatter: (v) => `${Math.round(v)}k`,
+                 tickLabelProps: () => ({ fontSize: 11 }),
+               },
+             ]}
+
           series={[
             {
-              data: avgSalaries,
-              label: 'Avg Salary (1–6 yrs)',
+              data: salaries,
+              label: 'Salary',
               showMark: true,
               markSize: 6,
-              color: '#888',
-              area: true,                        // fill under curve
-              areaBaseValue: 0,
-              areaOpacity: 0.1,
               lineWidth: 2,
-            },
-            {
-              data: selectedLine,
-              label: 'This Job',
-              showMark: true,
-              markSize: 16,
-              color: '#d32f2f',
-              markStyle: { fill: '#d32f2f', stroke: '#000', strokeWidth: 2 },
-              lineWidth: 0,
+              valueFormatter: (v) =>
+                `$${Math.round(v * 1000).toLocaleString()}`,
             },
           ]}
+          hideLegend
         />
       </Grid>
     </div>
