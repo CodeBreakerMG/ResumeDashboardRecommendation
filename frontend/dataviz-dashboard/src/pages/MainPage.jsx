@@ -21,8 +21,8 @@ import jobsData from "../assets/jobsData.json"; // adjust the path accordingly
 
 //const FAST_API_URL = "https://fine-nights-rush.loca.lt/resume/match" //OLD ONE
 
-//const FAST_API_URL =  "https://cloud.cesarsp.com:26000/resume/match"  //NEW ONE
-const FAST_API_URL =  "https://cac2-172-103-86-169.ngrok-free.app/resume/match"
+const FAST_API_URL =  "https://cloud.cesarsp.com:26000/resume/match"  //NEW ONE
+//const FAST_API_URL =  "https://cac2-172-103-86-169.ngrok-free.app/resume/match"
 
 //https://cloud.cesarsp.com:26000/docs
 
@@ -170,8 +170,6 @@ const MainPage = () => {
       </Grid>
       <Grid size={8} container>
       <Grid size={4} paddingX={1}>
-<<<<<<< Updated upstream
-=======
           <GraphContainer>
             <Typography variant="h5" gutterBottom>Match Score</Typography>
               <MatchScoreChart
@@ -182,63 +180,40 @@ const MainPage = () => {
               />
           </GraphContainer>
         </Grid>
-        <Grid size={4} paddingX={1}>
->>>>>>> Stashed changes
-          <GraphContainer>
-            <Typography variant="h5" gutterBottom>Match Score</Typography>
-              <MatchScoreChart
-                overall={100*jobs[jobIndex].matchScore}
-                experience={100}
-                skill={86}
-                industry={33}
-              />
-          </GraphContainer>
-        </Grid>
-        <Grid size={4} paddingX={1}>
-<<<<<<< Updated upstream
-          <GraphContainer>
-            <Typography variant="h5" gutterBottom color="secondary">Experience & Salary Comparison</Typography>
-            {(() => {
-            const title = jobs[jobIndex]?.jobTitle;
-            const progression = salaryTrends[title]?.progression || {};
-            return (
-              <JobComparisonChart
-                progression={progression}
-              />
-            );
-          })()}
-          </GraphContainer>
-        </Grid>
-<<<<<<< Updated upstream
-        <Grid size={6} paddingX={1}>
-          
-        <GraphContainer>
-           <Typography variant="h5" color="secondary">Location</Typography>
-           {(() => {
-             const title        = jobs[jobIndex]?.jobTitle;
-             const stateData    = salaryTrends[title]?.location || {};
-             const fullLocation = jobs[jobIndex].location;
-             console.log("🏷️ [MainPage] passing to LocationMap:", {
-               title, fullLocation, stateData
-             });
-             return (
-               <LocationMap
-                 location={fullLocation}
-                 stateSalaryData={stateData}
-               />
-             );
-           })()}
-         </GraphContainer>
-=======
-        <Grid size={4} paddingX={1}>
-=======
->>>>>>> Stashed changes
-          <GraphContainer>
-            <Typography variant="h5">Location</Typography>
-            <LocationMap location={jobs[jobIndex].location}/>
-          </GraphContainer>
->>>>>>> Stashed changes
-        </Grid>
+               <Grid size={4} paddingX={1}>
+                  <GraphContainer>
+                    <Typography variant="h5" gutterBottom color="secondary">Experience & Salary Comparison</Typography>
+                    {(() => {
+                    const title = jobs[jobIndex]?.jobTitle;
+                    const progression = salaryTrends[title]?.progression || {};
+                    return (
+                      <JobComparisonChart
+                        progression={progression}
+                      />
+                    );
+                  })()}
+                  </GraphContainer>
+                </Grid>
+                <Grid size={4} paddingX={1}>
+                  
+                <GraphContainer>
+                   <Typography variant="h5" color="secondary">Location</Typography>
+                   {(() => {
+                     const title        = jobs[jobIndex]?.jobTitle;
+                     const stateData    = salaryTrends[title]?.location || {};
+                     const fullLocation = jobs[jobIndex].location;
+                     console.log("🏷️ [MainPage] passing to LocationMap:", {
+                       title, fullLocation, stateData
+                     });
+                     return (
+                       <LocationMap
+                         location={fullLocation}
+                         stateSalaryData={stateData}
+                       />
+                     );
+                   })()}
+                 </GraphContainer>
+                </Grid>
         <Grid size={8} paddingX={1}>
           <GraphContainer>
             <Typography variant="h5" gutterBottom color="secondary">Skill Frequency</Typography>
