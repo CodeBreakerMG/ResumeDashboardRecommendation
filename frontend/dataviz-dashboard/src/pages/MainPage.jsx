@@ -59,7 +59,7 @@ const MainPage = () => {
             },
           }),
           new Promise((_, reject) =>
-            setTimeout(() => reject(new Error("Timeout")), 30000)
+            setTimeout(() => reject(new Error("Timeout")),60000)
           ),
         ]);
   
