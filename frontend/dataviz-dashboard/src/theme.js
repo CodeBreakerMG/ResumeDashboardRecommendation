@@ -1,4 +1,6 @@
 // theme.js
+import './assets/fonts/fonts.css';
+// theme.js
 import { createTheme } from '@mui/material/styles';
 
 const theme = createTheme({
@@ -16,12 +18,12 @@ const theme = createTheme({
       secondary: 'rgba(51, 51, 51, 0.8)',
     },
     background: {
-      default: '#ffffff', // fallback if gradient isn’t supported
+      default: '#ffffff',
     },
   },
 
   typography: {
-    fontFamily: '"Roboto", "Helvetica", "Arial", sans-serif',
+    fontFamily: '"Flexo", "Roboto", "Helvetica", "Arial", sans-serif',
     h3: {
       fontSize: '2.5rem',
       fontWeight: 700,
@@ -48,7 +50,7 @@ const theme = createTheme({
           height: '100vh',
           background: 'linear-gradient(135deg, #005dab 0%, #ff8500 100%)',
           overflow: 'hidden',
-          fontFamily: '"Roboto", "Helvetica", "Arial", sans-serif',
+          fontFamily: '"Flexo", "Roboto", "Helvetica", "Arial", sans-serif',
         },
       },
     },
