@@ -34,7 +34,8 @@ const MainPage = () => {
   const [jobs, setJobs] = useState([]);         //matches
   const [resume_skills, setResume_skills] = useState([]);
   const [word_cloud_skills_freq, setWord_cloud_skills_freq] = useState([]);
-  const [salaryTrends, setSalaryTrends] = useState([]);    
+  const [salaryTrends, setSalaryTrends] = useState({});    
+
 
   useEffect(() => {
     const sendFileToAPI = async () => {
@@ -95,13 +96,22 @@ const MainPage = () => {
   <>
     {loading ? (
       <Box
+        component="main"
         sx={{
           position: 'fixed',
           top: 0,
           left: 0,
           width: '100vw',
           height: '100vh',
-          backgroundColor: 'rgba(255,255,255,0.8)',
+          backgroundColor: '#ffffff',
+          backgroundImage: `
+            linear-gradient(
+              135deg,
+              rgba(0, 93, 171, 0.08) 0%,
+              rgba(255, 133, 0, 0.08) 100%
+            )
+          `,
+          color: '#333',
           zIndex: 2000,
           display: 'flex',
           justifyContent: 'center',
@@ -137,25 +147,33 @@ const MainPage = () => {
       <Grid size={7} container>
         <Grid size={6} paddingX={1}>
           <GraphContainer>
-            <Typography variant="h5" gutterBottom>Experience & Salary Comparison</Typography>
-            <JobComparisonChart job={jobs[jobIndex]} jobs={jobs} />
+            <Typography variant="h5" gutterBottom color="secondary">Experience & Salary Comparison</Typography>
+            {(() => {
+            const title = jobs[jobIndex]?.jobTitle;
+            const progression = salaryTrends[title]?.progression || {};
+            return (
+              <JobComparisonChart
+                progression={progression}
+              />
+            );
+          })()}
           </GraphContainer>
         </Grid>
         <Grid size={6} paddingX={1}>
           <GraphContainer>
-            <Typography variant="h5">Location</Typography>
+            <Typography variant="h5" color="secondary">Location</Typography>
             <LocationMap location={jobs[jobIndex].location}/>
           </GraphContainer>
         </Grid>
         <Grid size={8} paddingX={1}>
           <GraphContainer>
-            <Typography variant="h5" gutterBottom>Skill Frequency</Typography>
+            <Typography variant="h5" gutterBottom color="secondary">Skill Frequency</Typography>
             <SkillFrequencyChart job={jobs[jobIndex]} jobs={jobs} />
           </GraphContainer>
         </Grid>
         <Grid size={4} paddingX={1}>
           <GraphContainer>
-            <Typography variant="h5" gutterBottom>Benefit Coverage</Typography>
+            <Typography variant="h5" gutterBottom color="secondary">Benefit Coverage</Typography>
             <JobBenefitsRadarChart job={jobs[jobIndex]} jobs={jobs} />
           </GraphContainer>
         </Grid>

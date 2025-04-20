@@ -1,23 +1,64 @@
-// # (Optional) Material UI custom theme setup
-/*
-    This is a multi-line comment.
-    It can be used to explain a block of code
-    or to temporarily disable it.
-*/
-
- 
+// theme.js
 import { createTheme } from '@mui/material/styles';
 
 const theme = createTheme({
-  typography: {
-    fontFamily: 'Flexo, sans-serif',
-  },
   palette: {
     primary: {
-      main: '#1976d2', // Customize as needed
+      main: '#005dab',
+      contrastText: '#ffffff',
     },
     secondary: {
-      main: '#dc004e',
+      main: '#ff8500',
+      contrastText: '#ffffff',
+    },
+    text: {
+      primary: '#333333',
+      secondary: 'rgba(51, 51, 51, 0.8)',
+    },
+    background: {
+      default: '#ffffff', // fallback if gradient isn’t supported
+    },
+  },
+
+  typography: {
+    fontFamily: '"Roboto", "Helvetica", "Arial", sans-serif',
+    h3: {
+      fontSize: '2.5rem',
+      fontWeight: 700,
+      lineHeight: 1.1,
+    },
+    h5: {
+      fontSize: '1.5rem',
+      fontWeight: 600,
+    },
+    body1: {
+      fontSize: '1rem',
+    },
+    button: {
+      textTransform: 'none',
+      fontWeight: 600,
+    },
+  },
+
+  components: {
+    MuiCssBaseline: {
+      styleOverrides: {
+        body: {
+          margin: 0,
+          height: '100vh',
+          background: 'linear-gradient(135deg, #005dab 0%, #ff8500 100%)',
+          overflow: 'hidden',
+          fontFamily: '"Roboto", "Helvetica", "Arial", sans-serif',
+        },
+      },
+    },
+
+    MuiButton: {
+      styleOverrides: {
+        root: {
+          borderRadius: 8,
+        },
+      },
     },
   },
 });

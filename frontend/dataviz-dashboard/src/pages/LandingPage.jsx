@@ -10,6 +10,10 @@ import { useNavigate } from 'react-router-dom';
 import ResumeIcon from '@mui/icons-material/Description';
 import SpeedIcon from '@mui/icons-material/Speed';
 import ThumbUpIcon from '@mui/icons-material/ThumbUp';
+import sample1Pdf from '../assets/sample_resumes/Sample1.pdf';
+import sample2Pdf from '../assets/sample_resumes/Sample2.pdf';
+import sample3Pdf from '../assets/sample_resumes/Sample3.pdf';
+
 
 export default function LandingPage() {
   const fileInputRef = useRef(null);
@@ -21,10 +25,24 @@ export default function LandingPage() {
   };
   const handleUploadClick = () => fileInputRef.current.click();
 
-  // Insert sample resumes
-  const handleSampleClick = (sampleName) => {
-    navigate('/main', { state: { sample: `/assets/sample_resumes/${sampleName}.pdf` } });
+  const sampleMap = {
+    sample1: sample1Pdf,
+    sample2: sample2Pdf,
+    sample3: sample3Pdf
   };
+  
+const handleSampleClick = async (key) => {
+  const url = sampleMap[key];               
+  const res = await fetch(url);
+  const blob = await res.blob();
+  const file = new File(
+    [blob],
+    `${key}.pdf`,                           
+    { type: blob.type }
+  );
+  navigate('/main', { state: { file } });
+};
+
 
   return (
     <Box
