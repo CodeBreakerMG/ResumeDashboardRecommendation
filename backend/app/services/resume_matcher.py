@@ -32,6 +32,47 @@ def extract_text_from_pdf_bytes(pdf_bytes: bytes) -> str:
             text += page.get_text()
     return text.strip()
 
+def extract_resume_profile(text: str) -> dict:
+    prompt = f"""
+Extract a detailed resume profile in this JSON format:
+
+{{
+  "name": "Full Name",
+  "totalYearsExperience": 4.5,
+  "totalYearsEducation": 6,
+  "latestExperienceTitle": "...",
+  "latestEducationLevel": "Masters",
+  "experienceByDomain": {{ "Data Science": 2, "Software": 3 }},
+  "pastEmployers": ["Company A", "Company B"],
+  "education": [...],
+  "experience": [...],
+  "industriesWorkedIn": ["..."],
+  "publications": 2,
+  "patents": 0
+}}
+
+Only return valid JSON. Do not add ```json or any extra formatting.
+
+Resume:
+{text}
+"""
+    try:
+        model = genai.GenerativeModel("gemini-2.0-flash")
+        response = model.generate_content(prompt)
+        print("🧠 Resume profile Gemini response:\n", response.text)
+
+        # Remove ```json and trailing backticks if present
+        content = response.text.strip()
+        if content.startswith("```"):
+            content = re.sub(r"^```[a-zA-Z]*", "", content).strip()
+            content = content.rstrip("```").strip()
+
+        return json.loads(content)
+    except Exception as e:
+        print(f"❌ Resume profile extraction failed: {e}")
+        return {}
+
+
 # ------------------------ SKILL EXTRACTION ------------------------
 def extract_skills_with_gemini(text: str) -> list[str]:
     prompt = f"""
@@ -190,28 +231,27 @@ def get_top_job_matches(resume_skills: list[str], top_n: int = 10):
             continue
         final_jobs.append({
             "jobId": job.id,
-            "jobTitle": job.job_title,
-            "company": job.company,
+            "experience": job.experience,
+            "qualifications": job.qualifications,
+            "salaryRange": job.salary_range,
             "location": job.location,
+            "country": job.country,
             "latitude": job.latitude,
             "longitude": job.longitude,
-            "experience": job.experience,
-            "jobDescription": job.job_description,
-            "skills": job.skills,
-            "benefits": job.benefits,
-            "responsibilities": job.responsibilities,
-            "salaryRange": job.salary_range,
-            "companyProfile": job.company_profile,
-            "salaryRange": job.salary_range,
-            "country": job.country,
             "workType": job.work_type,
             "companySize": job.company_size,
             "jobPostingDate": job.job_posting_date,
             "preference": job.preference,
+            "contactPerson": job.contact_person,
+            "contact": job.contact,
+            "jobTitle": job.job_title,
             "role": job.role,
             "jobPortal": job.job_portal,
+            "jobDescription": job.job_description,
             "benefits": job.benefits,
+            "skills": job.skills,
             "responsibilities": job.responsibilities,
+            "company": job.company,
             "companyProfile": job.company_profile,
             "matchScore": round(score, 2),
             "matchedSkills": list(set(resume_skills) & set(job.skills or [])),
@@ -337,15 +377,14 @@ def process_resume_and_match_jobs(pdf_bytes: bytes) -> dict:
         matches = get_top_job_matches(resume_skills)
         word_cloud_skills_freq = extract_skills(resume_text)
         salary_trend = get_salary_trend(matches)
-
-        # Generate word cloud
-        # show_skills_wordcloud(word_cloud_skills_freq) # Call this function to create PNG (will be called at frontend)
+        resume_profile = extract_resume_profile(resume_text)
 
         return {
             "resume_skills": resume_skills,
             "matches": matches,
             "word_cloud_skills_freq": word_cloud_skills_freq,
-            "salaryTrend": salary_trend
+            "salaryTrend": salary_trend,
+            "resumeProfile": resume_profile
         }
 
     except Exception as e:
