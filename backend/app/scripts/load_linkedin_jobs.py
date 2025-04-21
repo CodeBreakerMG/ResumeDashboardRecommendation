@@ -11,8 +11,8 @@ from app.models.job import JobPosting
 
 # ---------------------- CONFIG ----------------------
 CSV_PATH = "data/postings.csv"
-START_ROW = 0
-END_ROW = 10  # Adjust for batch size
+START_ROW = 10
+END_ROW = 1000  # Adjust for batch size
 
 fake = Faker()
 embedder = SentenceTransformer("all-MiniLM-L6-v2", device="cpu")
