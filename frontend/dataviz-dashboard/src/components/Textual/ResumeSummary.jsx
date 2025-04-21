@@ -1,100 +1,181 @@
 import React from 'react';
-import { Box, Typography, Paper, Stack, Chip, Divider, Grid } from '@mui/material';
+import { Box, Typography, Paper, Stack, Grid, Divider} from '@mui/material';
 import NumberBadge from '../Other/NumberBadge';
+import JobCard from '../Other/JobCard';
 import DescriptionIcon from '@mui/icons-material/Description';
-
+import SkillWordCloud from '../Charts/SkillWordCloud';
 
 const ResumeSummary = ({
   jobCount = 10,
-  resumeSkills = ["python","c++","c","kotlin","java","sql","nosql","javascript","data cleansing & mining"] ,
+  resumeSkills = ["python", "c++", "c", "kotlin", "java", "sql", "nosql", "javascript", "data cleansing & mining"],
   skillMatchScore = 0.14,
   totalYearsExperience = 4,
-  totalYearsEducation = 4 ,
-  industriesWorkedIn = [ "Finance", "Software Development","Consulting" ],
-  latestExperienceTitle =  "Senior Data Engineer",
-  latestEducationLevel =  "Bachelor's"
+  totalYearsEducation = 4,
+  industriesWorkedIn = ["Finance", "Software Development", "Consulting"],
+  latestExperienceTitle = "Senior Data Engineer",
+  latestEducationLevel = "Bachelor's",
+  publications = 0,
+  education = [],
+  experience = []
 }) => {
   return (
     <Paper elevation={3} sx={{ p: 3, mb: 2, borderRadius: 3 }}>
-
-      <Stack
-        direction="row"
-        spacing={4}
-        flexWrap="wrap"
-        alignItems="center"
-        justifyContent="space-between"
-      >
-        <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
-          <DescriptionIcon sx={{ fontSize: 40, mr: 2 }} />
-          <Box>
-            <Typography variant="h4" sx={{ fontWeight: 600, lineHeight: 1.2 }}>
-              Resume
-            </Typography>
-            <Typography variant="h4" sx={{ fontWeight: 600, lineHeight: 1.2 }}>
-              Overview
-            </Typography>
-          </Box>
-        </Box>
+      <Box sx={{ overflowX: 'auto', width: '100%' }}>
         
-        <Divider orientation="vertical" flexItem sx={{ mx: 1 }} />
+        
+        <Grid container wrap="nowrap" spacing={2} alignItems="flex-start">
 
-        <Box>
-          <Grid container spacing={1} sx={{ height: '100%', flexWrap: 'wrap', alignContent: 'flex-start' }}>
-            <Grid size={4} paddingX={0.4}>
-              <NumberBadge color="rgb(0,93,171)" value={jobCount}  label="Job Matches" scale={1} />
-            </Grid>
-            <Grid size={4} paddingX={0.4}>
-              <NumberBadge color="rgb(255,133,0)" value={Math.round(totalYearsExperience)}  label="Years of Exp." scale={1} />
-            </Grid>
-            <Grid size={4} paddingX={0.4}>
-              <NumberBadge color="rgb(122,181,29)" value={Math.round(totalYearsEducation)}  label="Years of Education" scale={1} />
+        <Grid item sx={{ width: '15%' }}>
+          <Box
+            sx={{
+              display: 'flex',
+              justifyContent: 'left',
+              alignItems: 'center',
+              height: '100%',     // ensures vertical centering within the grid row
+              minHeight: 200      // optional: ensures visible height if content is small
+            }}
+          >
+                  <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                    <DescriptionIcon sx={{ fontSize: 40, mr: 2 }} />
+                    <Box>
+                      <Typography variant="h4" fontWeight={600} lineHeight={1.2}>
+                        Resume
+                      </Typography>
+                      <Typography variant="h4" fontWeight={600} lineHeight={1.2}>
+                        Overview
+                      </Typography>
+                    </Box>
+                  </Box>
+                </Box>
+          </Grid>
+          
+          <Divider orientation="vertical" flexItem />
+          
+          {/* Number Badges */}
+          <Grid item sx={{ width: '20%' , }}>
+          <Typography variant="h5" fontWeight={600} gutterBottom textAlign="center">Summary</Typography>
+            <Grid container rowSpacing={4} columnSpacing={{ xs: 1, sm: 2, md: 3 }}>
+              <Grid size={6}>
+                <NumberBadge color="rgb(255,133,0)" value={jobCount} label="Job Matches" scale={1} />
+              </Grid>
+              <Grid size={6}>
+                <NumberBadge color="rgb(122,181,29)" value={Math.round(totalYearsExperience)} label="Years of Exp." scale={1} />
+              </Grid>
+              <Grid size={6}>
+                <NumberBadge color="rgb(0,93,171)" value={Math.round(totalYearsEducation)} label="Years of Education" scale={1} />
+              </Grid>
+              <Grid size={6}>
+                <NumberBadge color="rgb(252,196,0)" value={Math.round(publications)} label="Publications" scale={1} />
+              </Grid>
             </Grid>
           </Grid>
-        </Box>
 
-        {/* Industry Stack */}
-        <Box
-          sx={{
-            border: '1px solid #ccc',
-            height: 200,
-            width: 250,
-            overflow: 'hidden',
-            borderRadius: 2,
-          }}
-        >
-          {industriesWorkedIn.map((industry, idx, arr) => (
-            <Box
-              key={idx}
-              sx={{
-                height: `${100 / arr.length}%`,
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                bgcolor: `hsl(${(idx * 80) % 360}, 70%, 90%)`, // light color variation
-                borderBottom: idx < arr.length - 1 ? '1px solid #aaa' : 'none',
-              }}
-            >
-              <Typography variant="body1" fontWeight={500}>
-                {industry}
-              </Typography>
+          <Divider orientation="vertical" flexItem />
+          {/* Work Experience  
+          {experience.length > 0 && (
+            <Grid item sx={{ width: '25%' }}>
+              <Typography variant="h5" fontWeight={600} gutterBottom textAlign="center">Work Experience</Typography>
+              <Box sx={{ maxHeight: 200, overflowY: 'auto', pr: 1 }}>
+                <Stack spacing={0.2}>
+                  
+                {experience.map((job, idx) => (
+                  <JobCard
+                    key={idx}
+                    title={job.title}
+                    company={job.company}
+                    startDate={job.startDate}
+                    endDate={job.endDate}
+                  />
+                ))}
+
+
+                </Stack>
+              </Box>
+            </Grid>
+          )}
+  */}
+        {/* Work Experience */ }
+          {experience.length > 0 && (
+            <Grid item sx={{ width: '25%' }}>
+              <Typography variant="h5" fontWeight={600} gutterBottom textAlign="center">Work Experience</Typography>
+              <Box sx={{ maxHeight: 200, overflowY: 'auto', pr: 1 }}>
+                <Stack spacing={0.2}>
+                  
+                {experience.map((job, idx) => (
+                  <JobCard
+                    key={idx}
+                    title={job.title}
+                    company={job.company}
+                    startDate={job.startDate}
+                    endDate={job.endDate}
+                  />
+                ))}
+
+
+                </Stack>
+              </Box>
+            </Grid>
+          )}
+
+<Divider orientation="vertical" flexItem />
+          {/* Education */}
+          {education.length > 0 && (
+            <Grid item sx={{ width: '20%' }}>
+              <Typography variant="h5" fontWeight={600} gutterBottom textAlign="center">Education</Typography>
+              <Box sx={{ maxHeight: 200, overflowY: 'auto', pr: 1 }}>
+                <Stack spacing={2}>
+                  {education.map((edu, idx) => (
+                    <Box key={idx}>
+                      <Typography variant="subtitle1" fontWeight={500}>{edu.educationTitle}</Typography>
+                      <Typography variant="body2" color="text.secondary">
+                        {edu.institution} | {edu.endDate}
+                      </Typography>
+                    </Box>
+                  ))}
+                </Stack>
+              </Box>
+            </Grid>
+          )}
+
+
+<Divider orientation="vertical" flexItem />
+          {/* Industries */}
+          <Grid item sx={{ width: '20%' }}>
+            <Typography variant="h5" fontWeight={600} gutterBottom textAlign="center">Industries</Typography>
+            <Box sx={{ border: '1px solid #ccc', height: 200, width: '100%', overflow: 'hidden', borderRadius: 2 }}>
+              {industriesWorkedIn.map((industry, idx, arr) => (
+                <Box
+                  key={idx}
+                  sx={{
+                    height: `${100 / arr.length}%`,
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    bgcolor: `hsl(${(idx * 80) % 360}, 70%, 90%)`,
+                    borderBottom: idx < arr.length - 1 ? '1px solid #aaa' : 'none',
+                  }}
+                >
+                  <Typography variant="body1" fontWeight={500}>{industry}</Typography>
+                </Box>
+              ))}
             </Box>
-          ))}
-        </Box>
+          </Grid>
 
-        <Box>
-          <Typography variant="subtitle2" color="text.secondary">
-            Skills in Resume:
-          </Typography>
-          <Stack direction="row" spacing={1} flexWrap="wrap">
-            {resumeSkills.slice(0, 6).map((skill, i) => (
-              <Chip key={i} label={skill} size="small" />
-            ))}
-            {resumeSkills.length > 6 && (
-              <Chip label={`+${resumeSkills.length - 6} more`} size="small" variant="outlined" />
-            )}
-          </Stack>
-        </Box>
-      </Stack>
+
+          <Divider orientation="vertical" flexItem />
+          {/* Skills */}
+          <Grid item sx={{ width: '20%' }}>
+            <Typography variant="h5" fontWeight={600} gutterBottom textAlign="center">Skills</Typography>
+            <Box sx={{ height: 200, width: '100%' }}>
+              <SkillWordCloud
+                job={{ skills: resumeSkills }}
+                jobs={[{ skills: resumeSkills }]}
+              />
+            </Box>
+          </Grid>
+
+        </Grid>
+      </Box>
     </Paper>
   );
 };

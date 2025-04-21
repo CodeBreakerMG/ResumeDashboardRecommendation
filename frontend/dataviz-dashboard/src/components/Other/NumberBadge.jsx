@@ -12,8 +12,8 @@ const NumberBadge = ({ color = '#f47c32', value = '20%', label = 'Of match', sca
         alignItems: 'center',
         justifyContent: 'center',
         backgroundColor: '#fff',
-        height: `${80 * scale}px`,
-        width: `${120 * scale}px`,
+        height: `100%`,
+        width: `80%`,
         minWidth: '80px',
       }}
     >

@@ -156,6 +156,8 @@ const MainPage = () => {
                       industriesWorkedIn={resumeProfile.industriesWorkedIn}
                       latestExperienceTitle={resumeProfile.latestExperienceTitle}
                       latestEducationLevel={resumeProfile.latestEducationLevel}
+                      education={resumeProfile.education}
+                      experience={resumeProfile.experience}
                     />
                   
                 )}
