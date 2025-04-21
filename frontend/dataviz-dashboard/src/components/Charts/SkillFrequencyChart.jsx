@@ -1,7 +1,8 @@
 import React, { useMemo, useRef, useEffect, useState } from 'react';
 import { Box, Tooltip, Typography } from '@mui/material';
 
-const SkillFrequencyChart = ({ job, jobs }) => {
+
+const SkillFrequencyChart = ({ job, jobs, isExpanded }) => {
   const containerRef = useRef(null);
   const [size, setSize] = useState({ width: 400, height: 300 });
 
@@ -27,9 +28,13 @@ const SkillFrequencyChart = ({ job, jobs }) => {
     });
 
     const selectedSkills = new Set(job?.skills || []);
-    const sortedSkills = Object.entries(counts)
+    let sortedSkills = Object.entries(counts)
       .sort(([, a], [, b]) => b - a)
       .map(([skill]) => skill);
+
+    if (!isExpanded) {
+      sortedSkills = sortedSkills.slice(0, 32); // Limit to 32 only when not expanded
+    }
 
     const max = Math.max(...Object.values(counts));
 
@@ -39,7 +44,7 @@ const SkillFrequencyChart = ({ job, jobs }) => {
       allSkills: sortedSkills,
       selectedSet: selectedSkills,
     };
-  }, [job, jobs]);
+  }, [job, jobs, isExpanded]);
 
   const getColor = (count) => {
     const intensity = count / maxCount;

@@ -56,38 +56,47 @@ return (
 
     <Divider sx={{ my: 3 }} />
 
-    {/* Core Info */}
-    <Box mb={2}>
-      <Typography><strong>Experience:</strong> {experience}</Typography>
-      <Typography><strong>Qualifications:</strong> {qualifications}</Typography>
-      <Typography><strong>Salary Range:</strong> {salaryRange}</Typography>
-      <Typography><strong>Work Type:</strong> {workType}</Typography>
-      <Typography><strong>Posted On:</strong> {jobPostingDate}</Typography>
-      <Typography><strong>Role:</strong>  {role}</Typography>
-      <Typography><strong>Setting:</strong>  {preference}</Typography>
+    {/* Core Info + Skills in row */}
+    <Box mb={3} sx={{ display: 'flex', gap: 2 }}>
+      {/* Core Info */}
+      <Box sx={{ flex: 2 }}>
+        <Typography><strong>Experience:</strong> {experience}</Typography>
+        <Typography><strong>Qualifications:</strong> {qualifications}</Typography>
+        <Typography><strong>Salary Range:</strong> {salaryRange}</Typography>
+        <Typography><strong>Work Type:</strong> {workType}</Typography>
+        <Typography><strong>Posted On:</strong> {jobPostingDate}</Typography>
+        <Typography><strong>Role:</strong>  {role}</Typography>
+        <Typography><strong>Setting:</strong>  {preference}</Typography>
+      </Box>
+      {/* Divider */}
+      <Divider orientation="vertical" flexItem sx={{ mx: 1 }} />
+      {/* Skills */}
+      <Box sx={{ flex: 3 }}>
+        <Typography variant="h6">Skills</Typography>
+        <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1 }}>
+          {skills.map((skill, idx) => (
+            <Chip key={idx} label={skill} />
+          ))}
+        </Box>
+      </Box>
     </Box>
 
     <Divider sx={{ my: 3 }} />
 
-    {/* Skills */}
-    <Box mb={3}>
-      <Typography variant="h6">Skills</Typography>
-      {skills.map((skill, idx) => (
-        <Chip key={idx} label={skill} sx={{ mr: 1, mb: 1 }} />
-      ))}
-    </Box>
-    
     {/* Job Description */}
-    <Box mb={3}>
+    <Box mb={3} sx={{ maxHeight: 150, overflowY: 'auto' }}>
       <Typography variant="h6">Description</Typography>
       <Typography>{jobDescription}</Typography>
     </Box>
 
+
     {/* Responsibilities */}
-    <Box mb={3}>
+    <Box mb={3} sx={{ maxHeight: 150, overflowY: 'auto' }}>
       <Typography variant="h6">Responsibilities</Typography>
       <Typography>{responsibilities}</Typography>
     </Box>
+
+    <Divider sx={{ my: 3 }} />
 
     {/* Company Profile */}
     <Box>

@@ -3,8 +3,19 @@ import { Paper, Box, IconButton } from '@mui/material';
 import OpenInFullIcon from '@mui/icons-material/OpenInFull';
 import CloseIcon from '@mui/icons-material/Close';
 
-const GraphContainer = ({ children }) => {
+
+const GraphContainer = ({ children, height_graph = 440  }) => {
   const [isExpanded, setIsExpanded] = useState(false);
+
+  const enhancedChildren = React.Children.map(children, (child) => {
+    if (
+      React.isValidElement(child) &&
+      child.type?.name === 'SkillFrequencyChart'
+    ) {
+      return React.cloneElement(child, { isExpanded });
+    }
+    return child;
+  });
 
   return (
     <>
@@ -22,19 +33,13 @@ const GraphContainer = ({ children }) => {
             padding: 4,
           }}
         >
-          {/* Close (X) Button */}
           <Box sx={{ position: 'absolute', top: 16, right: 60 }}>
-            <IconButton
-              onClick={() => setIsExpanded(false)}
-              sx={{ color: 'black' }}
-              aria-label="Close fullscreen"
-            >
+            <IconButton onClick={() => setIsExpanded(false)} sx={{ color: 'black' }}>
               <CloseIcon fontSize="large" />
             </IconButton>
           </Box>
-
           <Box sx={{ width: '100%', height: '100%' }}>
-            {children}
+            {enhancedChildren}
           </Box>
         </Box>
       )}
@@ -44,7 +49,7 @@ const GraphContainer = ({ children }) => {
           elevation={4}
           sx={{
             position: 'relative',
-            height: 400,
+            height: height_graph,
             p: 4,
             borderRadius: 4,
             display: 'flex',
@@ -52,18 +57,13 @@ const GraphContainer = ({ children }) => {
             justifyContent: 'center',
           }}
         >
-          {/* Expand Button */}
           <Box sx={{ position: 'absolute', top: 8, right: 8 }}>
-            <IconButton
-              onClick={() => setIsExpanded(true)}
-              aria-label="Expand fullscreen"
-            >
+            <IconButton onClick={() => setIsExpanded(true)}>
               <OpenInFullIcon />
             </IconButton>
           </Box>
-
           <Box sx={{ width: '100%', height: '100%' }}>
-            {children}
+            {enhancedChildren}
           </Box>
         </Paper>
       )}
@@ -71,16 +71,4 @@ const GraphContainer = ({ children }) => {
   );
 };
 
-export default GraphContainer;
-
-
-
-/*
-TO USE THIS GRAPH CONTAINER (Anything inside <GraphContainer> would be Children)
-
-<GraphContainer>
-  <Typography variant="h5">Hello World</Typography>
-  <YourCoolGraph />
-</GraphContainer>
-
-*/ 
+export default GraphContainer
