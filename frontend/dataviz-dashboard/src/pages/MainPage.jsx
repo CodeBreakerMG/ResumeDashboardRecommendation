@@ -104,8 +104,26 @@ const MainPage = () => {
   );
 
   // 3. Compute the match percentage
-  const skillMatchScore = normalizedJobSkills.length > 0
+  /*const skillMatchScore = normalizedJobSkills.length > 0
     ? (matchedSkills.length / normalizedJobSkills.length) * 100
+    : 0;
+*/
+
+  const skillMatchScore = normalizedJobSkills.length > 0
+    ? (() => {
+        let counter = 0;
+        for (let i = 0; i < normalizedResumeSkills.length; i++) {
+          const skillResume = normalizedResumeSkills[i];
+          for (let j = 0; j < normalizedJobSkills.length; j++) {
+            const skillJob = normalizedJobSkills[j];
+            if (skillJob === skillResume) {
+              counter += 1;
+              break;
+            }
+          }
+        }
+        return Math.min((counter / normalizedJobSkills.length)*1.5,1) * 100;
+      })()
     : 0;
 
   const getIndustryExperience = (industry, experienceByIndustry) => {
