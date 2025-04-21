@@ -2,7 +2,7 @@ import React from 'react';
 //import { useState } from 'react';
 import { Box, Typography, Chip, Button, Paper, Divider } from '@mui/material';
 
-const JobDetailView = ({ job }) => {
+const JobDetailView = ({ job, index }) => {
   if (!job) return null;
 /*
     const [tab, setTab] = useState(0);
@@ -43,6 +43,25 @@ const companyTicker    = job.companyProfile.Ticker  != null ? job.companyProfile
 const companyCEO       = job.companyProfile.CEO != null ? job.companyProfile.CEO : 'NO SECTOR';
 const companyContactPerson       = job.companyProfile.contactPerson != null ? job.companyProfile.contactPerson : 'NO SECTOR';
 const companyContact       = job.companyProfile.contact != null ? job.companyProfile.contact : 'NO SECTOR';
+
+const phoneNumbers = [
+  "555-1234",
+  "555-5678",
+  "555-9012",
+  "555-3456",
+  "555-7890"
+];
+
+const cyclePhoneNumbers = (index) => {
+  // Example usage:
+
+  let newIndex = (index - 1) % 5;
+  return phoneNumbers[newIndex]
+
+};
+
+ 
+
 
 return (
   <Box>
@@ -105,7 +124,7 @@ return (
       <Typography><strong>Industry:</strong> {companyIndustry}</Typography>
  
       <Typography><strong>Website:</strong> <a href={`https://${companyWebsite}`} target="_blank" rel="noreferrer">{companyWebsite}</a></Typography>
-      <Typography><strong>Contact Person :</strong>{companyContactPerson} • {companyContact}</Typography>
+      <Typography><strong>Contact Person :</strong>{companyCEO} • {cyclePhoneNumbers(index)}</Typography>
  
     </Box>
   </Box>

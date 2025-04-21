@@ -183,7 +183,7 @@ const MainPage = () => {
               }}
               elevation={3}
             >
-              <JobDetailView job={jobs[jobIndex]} />
+              <JobDetailView job={jobs[jobIndex]} index={jobIndex}/>
               <Stack direction="row" spacing={2} mt={2} justifyContent="center">
                 <Button variant="outlined" onClick={handlePrevious}>Previous</Button>
                 <Button variant="contained" onClick={handleNext}>Next</Button>
