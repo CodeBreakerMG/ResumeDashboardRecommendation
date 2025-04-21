@@ -17,8 +17,8 @@ import ResumeSummary from '../components/Textual/ResumeSummary';
 import jobsData from "../assets/jobsData_v2.json"; // adjust the path accordingly
 
 // const FAST_API_URL = "https://fine-nights-rush.loca.lt/resume/match" // OLD ONE
-const FAST_API_URL =  "https://cloud.cesarsp.com:26000/resume/match"  // NEW ONE
-//const FAST_API_URL = "https://cac2-172-103-86-169.ngrok-free.app/resume/match";
+// const FAST_API_URL =  "https://cloud.cesarsp.com:26000/resume/match"  // NEW ONE
+const FAST_API_URL = "https://cac2-172-103-86-169.ngrok-free.app/resume/match";
 
 // https://cloud.cesarsp.com:26000/docs
 
@@ -29,10 +29,12 @@ const MainPage = () => {
 
   const [loading, setLoading] = useState(false);
   const [jobIndex, setJobIndex] = useState(0);
+  const [showSummary, setShowSummary] = useState(true);
   const [jobs, setJobs] = useState([]);         // matches
   const [resume_skills, setResume_skills] = useState([]);
   const [word_cloud_skills_freq, setWord_cloud_skills_freq] = useState([]);
   const [salaryTrends, setSalaryTrends] = useState({});
+  const [resumeProfile, setResumeProfile] = useState([]);         // matches 
 
   useEffect(() => {
     const sendFileToAPI = async () => {
@@ -61,6 +63,7 @@ const MainPage = () => {
         setResume_skills(response.data.resume_skills);
         setWord_cloud_skills_freq(response.data.word_cloud_skills_freq);
         setSalaryTrends(response.data.salaryTrend);
+        setResumeProfile(response.data.resumeProfile);
         console.log("API Response:", response.data);
       } catch (error) {
         console.error("API call failed or timed out. Using local fallback.", error);
@@ -68,6 +71,7 @@ const MainPage = () => {
         setResume_skills(jobsData.resume_skills);
         setWord_cloud_skills_freq(jobsData.word_cloud_skills_freq);
         setSalaryTrends(jobsData.salaryTrend);
+        setResumeProfile(jobsData.resumeProfile);
       } finally {
         setLoading(false);
       }
@@ -135,8 +139,27 @@ const MainPage = () => {
         </Box>
       ) : jobs.length > 0 ? (
         <Grid container spacing={2} sx={{ height: 'calc(100vh - 64px)' }}>
-          <AppBarTip filename={fileName} file={uploadedFile} />
-          <Grid size={12} />
+          <AppBarTip
+            filename={fileName}
+            file={uploadedFile}
+            showSummary={showSummary}
+            onToggleSummary={() => setShowSummary(prev => !prev)}
+          />
+          <Grid size={12} >
+                {showSummary && (
+                    <ResumeSummary
+                      jobCount={jobs.length}
+                      resumeSkills={resume_skills}
+                      skillMatchScore={skillMatchScore}
+                      totalYearsExperience={resumeProfile.totalYearsExperience}
+                      totalYearsEducation={resumeProfile.totalYearsEducation}
+                      industriesWorkedIn={resumeProfile.industriesWorkedIn}
+                      latestExperienceTitle={resumeProfile.latestExperienceTitle}
+                      latestEducationLevel={resumeProfile.latestEducationLevel}
+                    />
+                  
+                )}
+          </Grid>
 
           <Grid size={4} container spacing={2} sx={{ height: '100%', flexWrap: 'wrap', alignContent: 'flex-start' }}>
             <Paper

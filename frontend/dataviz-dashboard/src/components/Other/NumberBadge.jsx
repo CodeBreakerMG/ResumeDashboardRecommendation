@@ -1,18 +1,20 @@
 import { Box, Typography } from '@mui/material';
 
-const NumberBadge = ({ color = '#f47c32', value = '20%', label = 'Of match' }) => {
+const NumberBadge = ({ color = '#f47c32', value = '20%', label = 'Of match', scale = 1 }) => {
   return (
     <Box
       sx={{
         border: `2px solid ${color}`,
         borderRadius: '16px',
-        padding: '16px 32px',
+        padding: `${8 * scale}px ${16 * scale}px`,
         display: 'inline-flex',
         flexDirection: 'column',
         alignItems: 'center',
         justifyContent: 'center',
-        backgroundColor: '#fff', // optional, or use transparent
-        height: '50%'
+        backgroundColor: '#fff',
+        height: `${80 * scale}px`,
+        width: `${120 * scale}px`,
+        minWidth: '80px',
       }}
     >
       <Typography
@@ -20,9 +22,7 @@ const NumberBadge = ({ color = '#f47c32', value = '20%', label = 'Of match' }) =
         sx={{
           fontWeight: 700,
           color: color,
-         
-          padding: '4px 12px',
-          fontSize: '3rem',
+          fontSize: `${24 * scale}px`,
           lineHeight: 1,
         }}
       >
@@ -31,11 +31,11 @@ const NumberBadge = ({ color = '#f47c32', value = '20%', label = 'Of match' }) =
 
       <Typography
         sx={{
-          marginTop: 1,
+          marginTop: `${4 * scale}px`,
           fontWeight: 700,
-          letterSpacing: '0.1em',
+          letterSpacing: '0.05em',
           color: color,
-          fontSize: '1rem',
+          fontSize: `${12 * scale}px`,
         }}
       >
         {label}
