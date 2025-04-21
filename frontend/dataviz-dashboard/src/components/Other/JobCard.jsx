@@ -58,7 +58,7 @@ const JobCard = ({ title, company, startDate, endDate }) => {
     <Paper
       elevation={1}
       sx={{
-        p: 1,
+        p: 0.5,
         pl: 1,
         borderRadius: 2,
         borderLeft: '6px solid rgb(0,164,196)',

@@ -4,6 +4,7 @@ import NumberBadge from '../Other/NumberBadge';
 import JobCard from '../Other/JobCard';
 import DescriptionIcon from '@mui/icons-material/Description';
 import SkillWordCloud from '../Charts/SkillWordCloud';
+import EducationCard from '../Other/EducationCard';
 
 const ResumeSummary = ({
   jobCount = 10,
@@ -71,13 +72,12 @@ const ResumeSummary = ({
           </Grid>
 
           <Divider orientation="vertical" flexItem />
-          {/* Work Experience  
+          {/* Work Experience */}
           {experience.length > 0 && (
             <Grid item sx={{ width: '25%' }}>
               <Typography variant="h5" fontWeight={600} gutterBottom textAlign="center">Work Experience</Typography>
               <Box sx={{ maxHeight: 200, overflowY: 'auto', pr: 1 }}>
-                <Stack spacing={0.2}>
-                  
+                <Stack spacing={0.5}>
                 {experience.map((job, idx) => (
                   <JobCard
                     key={idx}
@@ -87,35 +87,11 @@ const ResumeSummary = ({
                     endDate={job.endDate}
                   />
                 ))}
-
-
                 </Stack>
               </Box>
             </Grid>
           )}
-  */}
-        {/* Work Experience */ }
-          {experience.length > 0 && (
-            <Grid item sx={{ width: '25%' }}>
-              <Typography variant="h5" fontWeight={600} gutterBottom textAlign="center">Work Experience</Typography>
-              <Box sx={{ maxHeight: 200, overflowY: 'auto', pr: 1 }}>
-                <Stack spacing={0.2}>
-                  
-                {experience.map((job, idx) => (
-                  <JobCard
-                    key={idx}
-                    title={job.title}
-                    company={job.company}
-                    startDate={job.startDate}
-                    endDate={job.endDate}
-                  />
-                ))}
 
-
-                </Stack>
-              </Box>
-            </Grid>
-          )}
 
 <Divider orientation="vertical" flexItem />
           {/* Education */}
@@ -123,16 +99,17 @@ const ResumeSummary = ({
             <Grid item sx={{ width: '20%' }}>
               <Typography variant="h5" fontWeight={600} gutterBottom textAlign="center">Education</Typography>
               <Box sx={{ maxHeight: 200, overflowY: 'auto', pr: 1 }}>
-                <Stack spacing={2}>
-                  {education.map((edu, idx) => (
-                    <Box key={idx}>
-                      <Typography variant="subtitle1" fontWeight={500}>{edu.educationTitle}</Typography>
-                      <Typography variant="body2" color="text.secondary">
-                        {edu.institution} | {edu.endDate}
-                      </Typography>
-                    </Box>
+                <Stack spacing={0.5}>
+                  {education.map((educ, idx) => (
+                    <EducationCard
+                      key={idx}
+                      degree={educ.degree}
+                      major={educ.major}
+                      institution={educ.institution}
+                      endDate={educ.endDate}
+                    />
                   ))}
-                </Stack>
+                  </Stack>
               </Box>
             </Grid>
           )}

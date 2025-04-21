@@ -17,8 +17,8 @@ import ResumeSummary from '../components/Textual/ResumeSummary';
 import jobsData from "../assets/jobsData_v2.json"; // adjust the path accordingly
 
 // const FAST_API_URL = "https://fine-nights-rush.loca.lt/resume/match" // OLD ONE
-// const FAST_API_URL =  "https://cloud.cesarsp.com:26000/resume/match"  // NEW ONE
-const FAST_API_URL = "https://cac2-172-103-86-169.ngrok-free.app/resume/match";
+const FAST_API_URL =  "https://cloud.cesarsp.com:26000/resume/match"  // NEW ONE
+//const FAST_API_URL = "https://cac2-172-103-86-169.ngrok-free.app/resume/match";
 
 // https://cloud.cesarsp.com:26000/docs
 
@@ -108,6 +108,10 @@ const MainPage = () => {
     ? (matchedSkills.length / normalizedJobSkills.length) * 100
     : 0;
 
+  const getIndustryExperience = (industry, experienceByIndustry) => {
+    return experienceByIndustry?.[industry] ?? 0;
+  }
+
   return (
     <>
       {loading ? (
@@ -144,6 +148,7 @@ const MainPage = () => {
             file={uploadedFile}
             showSummary={showSummary}
             onToggleSummary={() => setShowSummary(prev => !prev)}
+            userName={resumeProfile.name}
           />
           <Grid size={12} >
                 {showSummary && (
@@ -193,9 +198,9 @@ const MainPage = () => {
                 <br /><br />
                 <MatchScoreChart
                   overall={100 * jobs[jobIndex].matchScore}
-                  experience={100}
+                  experience={Math.abs(Math.min((resumeProfile.totalYearsExperience / parseYears(jobs[jobIndex].experience)[1]-parseYears(jobs[jobIndex].experience)[0]) * 100, 100))}
                   skill={skillMatchScore}
-                  industry={33}
+                  industry={Math.abs(Math.min((resumeProfile.totalYearsExperience / parseYears(jobs[jobIndex].experience)[1]-parseYears(jobs[jobIndex].experience)[0]) * 100, 100))}
                 />
               </GraphContainer>
             </Grid>

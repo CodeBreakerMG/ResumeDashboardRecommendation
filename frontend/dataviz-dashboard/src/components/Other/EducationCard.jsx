@@ -53,15 +53,15 @@ const formatDateToMonthYear = (input) => {
     return input; // fallback if all else fails
   };
 
-const EducationCard = ({ title, company, startDate, endDate }) => {
+const EducationCard = ({ degree, major, institution, endDate }) => {
   return (
     <Paper
       elevation={1}
       sx={{
-        p: 1,
+        p: 0.5,
         pl: 1,
         borderRadius: 2,
-        borderLeft: '6px solid rgb(0,164,196)',
+        borderLeft: '6px solid rgb(255,78,20)',
         bgcolor: '#fcfcfc',
         transition: 'transform 0.2s',
         '&:hover': {
@@ -72,15 +72,15 @@ const EducationCard = ({ title, company, startDate, endDate }) => {
       <Typography
         variant="subtitle1"
         fontWeight={600}
-        sx={{ color: 'rgb(0,93,171)' }}
+        sx={{ color: 'rgb(255,78,0)' }}
       >
-        {title}
+        {institution}  |  {degree}
       </Typography>
       <Typography
         variant="body2"
-        sx={{ color: 'rgb(0,170,230)' }}
+        sx={{ color: ' rgb(255,133,0)' }}
       >
-        {company} | {formatDateToMonthYear(startDate)} – {formatDateToMonthYear(endDate)}
+        {major} | {formatDateToMonthYear(endDate)}
       </Typography>
     </Paper>
   );
@@ -88,8 +88,7 @@ const EducationCard = ({ title, company, startDate, endDate }) => {
 
 export default EducationCard;
 
-
-
+ 
 /*
 <Typography
 variant="subtitle1"
@@ -102,6 +101,6 @@ sx={{ color: 'rgb(0,93,171)' }} // newblue
 variant="body2"
 sx={{ color: 'rgb(0,170,230)' }} // goodgreen
 >
-{company} | {startDate} - {endDate}
+{institution} | {startDate} - {endDate}
 </Typography>
 */
