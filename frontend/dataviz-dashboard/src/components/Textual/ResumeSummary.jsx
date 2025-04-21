@@ -1,5 +1,5 @@
 import React from 'react';
-import { Box, Typography, Paper, Stack, Grid, Divider} from '@mui/material';
+import { Box, Typography, Paper, Stack, Grid, Divider, Chip} from '@mui/material';
 import NumberBadge from '../Other/NumberBadge';
 import JobCard from '../Other/JobCard';
 import DescriptionIcon from '@mui/icons-material/Description';
@@ -117,7 +117,7 @@ const ResumeSummary = ({
 
 <Divider orientation="vertical" flexItem />
           {/* Industries */}
-          <Grid item sx={{ width: '20%' }}>
+          <Grid item sx={{ width: '15%' }}>
             <Typography variant="h5" fontWeight={600} gutterBottom textAlign="center">Industries</Typography>
             <Box sx={{ border: '1px solid #ccc', height: 200, width: '100%', overflow: 'hidden', borderRadius: 2 }}>
               {industriesWorkedIn.map((industry, idx, arr) => (
@@ -138,16 +138,37 @@ const ResumeSummary = ({
             </Box>
           </Grid>
 
-
+     
           <Divider orientation="vertical" flexItem />
           {/* Skills */}
-          <Grid item sx={{ width: '20%' }}>
+          <Grid item sx={{ width: '25%' }}>
             <Typography variant="h5" fontWeight={600} gutterBottom textAlign="center">Skills</Typography>
-            <Box sx={{ height: 200, width: '100%' }}>
-              <SkillWordCloud
-                job={{ skills: resumeSkills }}
-                jobs={[{ skills: resumeSkills }]}
-              />
+            <Box sx={{ maxHeight: 200, overflowY: 'auto', pr: 1, flex: 3 }}>
+              <Box sx={{ maxHeight: 200, display: 'flex', flexWrap: 'wrap', gap: 1 }}>
+                {resumeSkills.map((skill, idx) => (
+                  <Chip 
+                    key={idx} 
+                    label={skill} 
+                    sx={{ 
+
+                      bgcolor: 'rgb(122,181,29)',
+                      fontSize: '14px' ,
+                      fontWeight: 'bold',
+                      color: '#fff' ,
+                      p: 0.5,
+                      pl: 1,
+                      borderRadius: 2,
+                      //borderLeft: '6px solid rgb(255,78,20)',
+                       //border: '1px solid rgb(122,181,29)',
+                       
+                      transition: 'transform 0.2s',
+                      '&:hover': {
+                        transform: 'scale(1.015)'
+                     }} }
+ 
+                    />
+                ))}
+              </Box> 
             </Box>
           </Grid>
 
@@ -158,3 +179,14 @@ const ResumeSummary = ({
 };
 
 export default ResumeSummary;
+
+
+
+/*
+<Box sx={{ maxHeight: '100%', overflowY: 'auto', pr: 1 }}>
+              <SkillWordCloud
+                job={{ skills: resumeSkills }}
+                jobs={[{ skills: resumeSkills }]}
+              />
+            </Box>
+*/ 

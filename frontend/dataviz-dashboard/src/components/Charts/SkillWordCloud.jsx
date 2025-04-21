@@ -57,7 +57,7 @@ const SkillWordCloud = ({ job, jobs, width = 600, height = 400 }) => {
         .selectAll("text")
         .data(words)
         .join("text")
-        .style("font-family", "Impact")
+        .style("font-family", "Helvetica")
         .style("font-size", d => `${d.size}px`)
         .style("font-weight", d => (d.isSelected ? "bold" : "normal"))
         .style("fill", d => (d.isSelected ? "#005DAB" : color(d.text)))

@@ -48,8 +48,10 @@ const SkillFrequencyChart = ({ job, jobs, isExpanded }) => {
 
   const getColor = (count) => {
     const intensity = count / maxCount;
-    const red = Math.floor(255 * intensity);
-    return `rgb(${red}, 60, 60)`;
+    const green = 255 - Math.min(122,Math.floor(122 * intensity*1.5));
+    const red = 255 - Math.floor(255 * intensity);
+    return `rgb(255, ${green}, 0)`;
+    //return `rgb(${red}, 60, 60)`;
   };
 
   return (
@@ -81,7 +83,8 @@ const SkillFrequencyChart = ({ job, jobs, isExpanded }) => {
                   height: 60,
                   backgroundColor: getColor(count),
                   color: isSelected ? 'white' : 'black',
-                  border: isSelected ? '3px solid #0077ff' : '1px solid #ccc',
+                  border: isSelected ? '5px solid #0077ff' : '1px solid #ccc',
+                  //border: isSelected ? '5px solid rgb(255,78,0)' : '1px solid #ccc',
                   borderRadius: 2,
                   fontWeight: isSelected ? 'bold' : 'normal',
                   fontSize: '0.85rem',
