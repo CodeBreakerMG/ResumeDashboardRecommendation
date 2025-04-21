@@ -198,9 +198,9 @@ const MainPage = () => {
                 <br /><br />
                 <MatchScoreChart
                   overall={100 * jobs[jobIndex].matchScore}
-                  experience={Math.abs(Math.min((resumeProfile.totalYearsExperience / parseYears(jobs[jobIndex].experience)[1]-parseYears(jobs[jobIndex].experience)[0]) * 100, 100))}
+                  experience={Math.min(Math.abs(Math.min((resumeProfile.totalYearsExperience / parseYears(jobs[jobIndex].experience)[1]-parseYears(jobs[jobIndex].experience)[0]) * 100, 100)),100)}
                   skill={skillMatchScore}
-                  industry={Math.abs(Math.min((resumeProfile.totalYearsExperience / parseYears(jobs[jobIndex].experience)[1]-parseYears(jobs[jobIndex].experience)[0]) * 100, 100))}
+                  industry={Math.min(Math.abs(Math.min((resumeProfile.totalYearsExperience / parseYears(jobs[jobIndex].experience)[1]-parseYears(jobs[jobIndex].experience)[0]) * 100, 100)),100)}
                 />
               </GraphContainer>
             </Grid>
