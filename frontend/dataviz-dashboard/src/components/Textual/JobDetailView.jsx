@@ -55,7 +55,7 @@ const phoneNumbers = [
 const cyclePhoneNumbers = (index) => {
   // Example usage:
 
-  let newIndex = (index - 1) % 5;
+  let newIndex = (index) % 5;
   return phoneNumbers[newIndex]
 
 };
@@ -65,14 +65,24 @@ const cyclePhoneNumbers = (index) => {
 
 return (
   <Box>
-    {/* Job Header */}
-    <Typography variant="h5" fontWeight="bold">
-      {jobTitle}
-    </Typography>
-    <Typography variant="subtitle1" color="text.secondary">
-      {companyName} • {location}
-    </Typography>
 
+    <Box mb={3} sx={{ display: 'flex', gap: 2 }}>
+        {/* Job Header */}
+        <Box sx={{ flex: 4 }}>
+          <Typography variant="h5" fontWeight="bold">
+            {jobTitle}
+          </Typography>
+          <Typography variant="subtitle1" color="text.secondary">
+            {companyName} • {location}
+          </Typography>
+        </Box>     
+        <Box sx={{ flex: 1 }}>
+          <Typography variant="h3" fontWeight="bold" align='right' color='rgb(151, 200, 240)' >
+              # {index + 1}
+           </Typography>
+
+        </Box>
+    </Box>
     <Divider sx={{ my: 3 }} />
 
     {/* Core Info + Skills in row */}
@@ -124,7 +134,7 @@ return (
       <Typography><strong>Industry:</strong> {companyIndustry}</Typography>
  
       <Typography><strong>Website:</strong> <a href={`https://${companyWebsite}`} target="_blank" rel="noreferrer">{companyWebsite}</a></Typography>
-      <Typography><strong>Contact Person :</strong>{companyCEO} • {cyclePhoneNumbers(index)}</Typography>
+      <Typography><strong>Contact Person: </strong>{companyCEO} • {cyclePhoneNumbers(index)}</Typography>
  
     </Box>
   </Box>

@@ -26,7 +26,7 @@ const ResumeSummary = ({
         
         <Grid container wrap="nowrap" spacing={2} alignItems="flex-start">
 
-        <Grid item sx={{ width: '15%' }}>
+        <Grid item sx={{ width: '10%' }}>
           <Box
             sx={{
               display: 'flex',
@@ -141,7 +141,7 @@ const ResumeSummary = ({
      
           <Divider orientation="vertical" flexItem />
           {/* Skills */}
-          <Grid item sx={{ width: '25%' }}>
+          <Grid item sx={{ width: '30%' }}>
             <Typography variant="h5" fontWeight={600} gutterBottom textAlign="center">Skills</Typography>
             <Box sx={{ maxHeight: 200, overflowY: 'auto', pr: 1, flex: 3 }}>
               <Box sx={{ maxHeight: 200, display: 'flex', flexWrap: 'wrap', gap: 1 }}>

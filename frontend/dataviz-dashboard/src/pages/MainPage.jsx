@@ -57,24 +57,68 @@ const MainPage = () => {
           ),
         ]);
 
+      let incomingJobs = [];
+
       try {
         const response = await fetchWithTimeout();
-        setJobs(response.data.matches); // Or response.data.jobs
+        incomingJobs = response.data.matches;
+        //setJobs(response.data.matches); // Or response.data.jobs
         setResume_skills(response.data.resume_skills);
         setWord_cloud_skills_freq(response.data.word_cloud_skills_freq);
         setSalaryTrends(response.data.salaryTrend);
         setResumeProfile(response.data.resumeProfile);
         console.log("API Response:", response.data);
-      } catch (error) {
+      }
+      catch (error) {
         console.error("API call failed or timed out. Using local fallback.", error);
-        setJobs(jobsData.matches); // Load local jobs
+        incomingJobs = jobsData.matches;
+        // setJobs(jobsData.matches); // Load local jobs
         setResume_skills(jobsData.resume_skills);
         setWord_cloud_skills_freq(jobsData.word_cloud_skills_freq);
         setSalaryTrends(jobsData.salaryTrend);
         setResumeProfile(jobsData.resumeProfile);
-      } finally {
+      }
+      finally {
+        const normalizedResumeSkills = resume_skills.map(skill => skill.toLowerCase());
+      
+        const sortedJobs = [...incomingJobs]
+          .map(job => {
+            const normalizedJobSkills = (job.skills || []).map(skill => skill.toLowerCase());
+      
+            let counter = 0;
+            for (let i = 0; i < normalizedResumeSkills.length; i++) {
+              const skillResume = normalizedResumeSkills[i];
+              for (let j = 0; j < normalizedJobSkills.length; j++) {
+                const skillJob = normalizedJobSkills[j];
+                if (skillJob === skillResume) {
+                  counter += 1;
+                  break;
+                }
+              }
+            }
+      
+            const skillMatchScore = normalizedJobSkills.length > 0
+              ? Math.min((counter / normalizedJobSkills.length) * 1.5, 1) * 100
+              : 0;
+      
+            return {
+              ...job,
+              __skillMatchScore: skillMatchScore, // Attach for sorting
+            };
+          })
+          .sort((a, b) => {
+            // First by skill match, then by matchScore
+            if (b.__skillMatchScore !== a.__skillMatchScore) {
+              return b.__skillMatchScore - a.__skillMatchScore;
+            }
+            return b.matchScore - a.matchScore;
+          });
+          
+        const lastSortedJobs = [...sortedJobs].sort((a, b) => b.matchScore - a.matchScore);
+        setJobs(lastSortedJobs);
         setLoading(false);
       }
+      
     };
 
     sendFileToAPI();
