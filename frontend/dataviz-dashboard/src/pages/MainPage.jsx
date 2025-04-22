@@ -16,10 +16,9 @@ import ResumeSummary from '../components/Textual/ResumeSummary';
 
 import jobsData from "../assets/jobsData_v2.json"; // adjust the path accordingly
 
-// const FAST_API_URL = "https://fine-nights-rush.loca.lt/resume/match" // OLD ONE
+ 
 const FAST_API_URL =  "https://cloud.cesarsp.com:26000/resume/match"  // NEW ONE
-//const FAST_API_URL = "https://cac2-172-103-86-169.ngrok-free.app/resume/match";
-
+const TIMEOUT_MILISECONDS = 60000 //60000
 // https://cloud.cesarsp.com:26000/docs
 
 const MainPage = () => {
@@ -53,7 +52,7 @@ const MainPage = () => {
             },
           }),
           new Promise((_, reject) =>
-            setTimeout(() => reject(new Error("Timeout")), 60000)
+            setTimeout(() => reject(new Error("Timeout")), TIMEOUT_MILISECONDS)
           ),
         ]);
 
@@ -114,7 +113,7 @@ const MainPage = () => {
             return b.matchScore - a.matchScore;
           });
           
-        const lastSortedJobs = [...sortedJobs].sort((a, b) => b.matchScore - a.matchScore);
+        const lastSortedJobs = [...sortedJobs].sort((a, b) => Math.round(b.matchScore) - Math.round(a.matchScore));
         setJobs(lastSortedJobs);
         setLoading(false);
       }
