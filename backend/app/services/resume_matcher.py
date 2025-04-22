@@ -23,7 +23,6 @@ genai.configure(api_key=os.getenv("GEMINI_API_KEY"))
 embedding_model = SentenceTransformer("all-MiniLM-L6-v2", device="cpu")
 kw_model = KeyBERT(embedding_model)
 
-# ------------------------ PDF TEXT EXTRACTION ------------------------
 def extract_text_from_pdf_bytes(pdf_bytes: bytes) -> str:
     import fitz
     text = ""
@@ -59,21 +58,14 @@ Resume:
     try:
         model = genai.GenerativeModel("gemini-2.0-flash")
         response = model.generate_content(prompt)
-        print("🧠 Resume profile Gemini response:\n", response.text)
-
-        # Remove ```json and trailing backticks if present
         content = response.text.strip()
         if content.startswith("```"):
-            content = re.sub(r"^```[a-zA-Z]*", "", content).strip()
-            content = content.rstrip("```").strip()
-
+            content = re.sub(r"^```[a-zA-Z]*", "", content).strip().rstrip("```").strip()
         return json.loads(content)
     except Exception as e:
         print(f"❌ Resume profile extraction failed: {e}")
         return {}
 
-
-# ------------------------ SKILL EXTRACTION ------------------------
 def extract_skills_with_gemini(text: str) -> list[str]:
     prompt = f"""
 Extract only the professional skills from this resume as a valid Python list of strings.
@@ -84,29 +76,12 @@ Resume:
 Return only the list. No explanation, no code block, no comments.
 """
     try:
-        response = genai.GenerativeModel("gemini-1.5-flash").generate_content(prompt)
-        print("🧠 Gemini raw response:\n", response.text)
+        response = genai.GenerativeModel("gemini-2.0-flash").generate_content(prompt)
         return [s.lower().strip() for s in ast.literal_eval(response.text.strip()) if isinstance(s, str)]
     except Exception as e:
         print(f"❌ Gemini skill extraction failed: {e}")
         return []
 
-def extract_skills_with_mistral(text: str) -> list[str]:
-    prompt = f"""
-You are a resume assistant. Extract a list of relevant professional skills from this resume.
-
-Return ONLY a Python list of strings — no explanation.
-
-{text}
-"""
-    try:
-        response = ollama.chat(model="mistral", messages=[{"role": "user", "content": prompt}])
-        return [s.lower().strip() for s in ast.literal_eval(response['message']['content']) if isinstance(s, str)]
-    except Exception as e:
-        print(f"❌ Mistral skill extraction failed: {e}")
-        return []
-
-# ------------------------ WORD CLOUD ------------------------
 def extract_keywords_for_wordcloud(text: str, top_n: int = 25):
     try:
         keywords = kw_model.extract_keywords(
@@ -120,84 +95,47 @@ def extract_keywords_for_wordcloud(text: str, top_n: int = 25):
         print("❌ Error extracting word cloud keywords:", e)
         return []
 
-# ------------------------ RERANKING ------------------------
-def rank_with_gemini(resume_skills, job_snippets):
-    import google.generativeai as genai
-    import os
-    import re
-
+def rank_with_gemini(resume_skills, resume_profile, job_snippets):
     prompt = f"""
-You are an AI assistant helping match a resume to job descriptions.
+You are an AI assistant evaluating job matches for a candidate.
 
-The candidate has the following skills:
+Candidate Skills:
 {', '.join(resume_skills)}
 
-Below are job postings, each with jobId, title, company, and description:
+Candidate Profile:
+{json.dumps(resume_profile, indent=2)}
 
+Here are job postings:
 {json.dumps(job_snippets, indent=2)}
 
-From this list, return up to 15 matches in the following format (one per line):
-
-<jobId> - <one-line match reason> that explains how the job aligns with the candidate’s skills
-
-Make the reasons specific to each job. DO NOT repeat the same sentence.
-
-DO NOT include any explanations, markdown, or extra comments.
-"""
-
-    try:
-        model = genai.GenerativeModel("gemini-2.0-flash")
-        response = model.generate_content(prompt)
-        print("🧠 Gemini raw response:\n", response.text)
-
-        pattern = r"(\d+)\s*[-–:]\s*(.+)"
-        matches = []
-        valid_ids = {job["jobId"] for job in job_snippets}
-
-        for line in response.text.strip().splitlines():
-            m = re.match(pattern, line.strip())
-            if m:
-                job_id = int(m.group(1))
-                reason = m.group(2).strip()
-                if job_id in valid_ids:
-                    matches.append({"jobId": job_id, "matchReason": reason})
-        return matches
-
-    except Exception as e:
-        print("❌ Gemini matching failed:", e)
-        return []
-
-
-def rank_with_mistral(resume_skills, job_snippets):
-    prompt = f"""
-You are a helpful job matching assistant. A candidate has these skills:
-
-{', '.join(resume_skills)}
-
-Here are job postings (each with jobId and description):
-
-{json.dumps(job_snippets)}
-
-Rank the jobs by best fit to the candidate and explain why.
-
-⚠️ Return ONLY valid JSON, like:
+Return up to 15 best matches as valid JSON list. Use this format:
 
 [
   {{
     "jobId": 123,
-    "matchReason": "Mentions Python, AWS, and CI/CD which match the resume."
-  }}
+    "matchReason": "Clear explanation of alignment",
+    "matchedSkills": ["python", "sql"],
+    "skillMatchPercent": 87.5,
+    "industryMatchPercent": 100,
+    "experienceMatchPercent": 75.0
+  }},
+  ...
 ]
+
+Return ONLY the JSON array. No explanation or markdown.
 """
     try:
-        response = ollama.chat(model="mistral", messages=[{"role": "user", "content": prompt}])
-        return json.loads(response['message']['content'])
+        model = genai.GenerativeModel("gemini-2.0-flash")
+        response = model.generate_content(prompt)
+        content = response.text.strip()
+        if content.startswith("```"):
+            content = re.sub(r"^```[a-zA-Z]*", "", content).strip().rstrip("```").strip()
+        return json.loads(content)
     except Exception as e:
-        print("❌ Mistral reranking failed:", e)
+        print("❌ Gemini rerank failed:", e)
         return []
 
-# ------------------------ JOB MATCHING ------------------------
-def get_top_job_matches(resume_skills: list[str], top_n: int = 10):
+def get_top_job_matches(resume_skills: list[str], resume_profile: dict, top_n: int = 10):
     db: Session = SessionLocal()
     jobs = db.query(JobPosting).filter(JobPosting.embedding != None).yield_per(100)
 
@@ -222,13 +160,16 @@ def get_top_job_matches(resume_skills: list[str], top_n: int = 10):
         "description": job.job_description or "",
         "skills": job.skills or [],
     } for _, job in top_jobs]
-    llama_results = rank_with_gemini(resume_skills, job_snippets)
-    reason_lookup = {entry["jobId"]: entry["matchReason"] for entry in llama_results if "jobId" in entry and "matchReason" in entry}
+
+    ranked = rank_with_gemini(resume_skills, resume_profile, job_snippets)
+    ranked_lookup = {entry["jobId"]: entry for entry in ranked if "jobId" in entry}
 
     final_jobs = []
     for score, job in top_jobs:
-        if job.id not in reason_lookup:
+        match_info = ranked_lookup.get(job.id)
+        if not match_info:
             continue
+
         final_jobs.append({
             "jobId": job.id,
             "experience": job.experience,
@@ -254,18 +195,20 @@ def get_top_job_matches(resume_skills: list[str], top_n: int = 10):
             "company": job.company,
             "companyProfile": job.company_profile,
             "matchScore": round(score, 2),
-            "matchedSkills": list(set(resume_skills) & set(job.skills or [])),
-            "matchReason": reason_lookup[job.id]
+            "matchedSkills": match_info.get("matchedSkills", []),
+            "matchReason": match_info.get("matchReason", ""),
+            "skillMatchPercent": match_info.get("skillMatchPercent", 0),
+            "industryMatchPercent": match_info.get("industryMatchPercent", 0),
+            "experienceMatchPercent": match_info.get("experienceMatchPercent", 0),
         })
 
     db.close()
     return final_jobs[:top_n]
 
-# ------------------------ SALARY TREND ------------------------
 def parse_salary(text):
     try:
         return int(re.sub(r"[^\d]", "", text))
-    except Exception:
+    except:
         return None
 
 def get_salary_progression_trend(job_title: str):
@@ -292,7 +235,7 @@ def get_salary_progression_trend(job_title: str):
                 if mean_exp not in trends:
                     trends[mean_exp] = []
                 trends[mean_exp].append(mean_salary)
-        except Exception:
+        except:
             continue
 
     db.close()
@@ -316,12 +259,10 @@ def get_salary_location_trend(job_title: str):
                 if job.location not in trends:
                     trends[job.location] = []
                 trends[job.location].append(mean_salary)
-        except Exception:
+        except:
             continue
 
     db.close()
-    
-    # Merge trends by state
     for k in list(trends.keys()):
         if len(k) > 2:
             state = k[-2:]
@@ -329,12 +270,6 @@ def get_salary_location_trend(job_title: str):
                 trends[state] = []
             trends[state].extend(trends[k])
             del trends[k]
-            
-    # calculate the average salary for each state
-    for k in trends.keys():
-        trends[k] = [sum(trends[k]) / len(trends[k])]
-
-    # return the average salary for each state
     return {k: sum(v)/len(v) for k, v in trends.items()}
 
 def get_salary_trend(job_matches: list[dict]):
@@ -342,7 +277,6 @@ def get_salary_trend(job_matches: list[dict]):
     for match in job_matches:
         if match["jobTitle"] not in titles:
             titles.append(match["jobTitle"])
-
     trend = {}
     for title in titles:
         trend[title] = {
@@ -351,33 +285,28 @@ def get_salary_trend(job_matches: list[dict]):
         }
     return trend
 
-# ------------------------ WORD CLOUD ------------------------
 def show_skills_wordcloud(skill_freq):
-    # Generate word cloud
     wordcloud = WordCloud(
         width=1000,
         height=500,
-        background_color=None,  # Transparent background
-        mode="RGBA",  # Enables transparency in output
-        colormap="coolwarm",  # Color theme for words
+        background_color=None,
+        mode="RGBA",
+        colormap="coolwarm",
         max_words=100,
         contour_color='steelblue',
         contour_width=2,
         max_font_size=150
     ).generate_from_frequencies(skill_freq)
-
-    # Save word cloud to a file with transparency
     wordcloud.to_file("wordcloud.png")
 
-# ------------------------ MAIN ENTRY POINT ------------------------
 def process_resume_and_match_jobs(pdf_bytes: bytes) -> dict:
     try:
         resume_text = extract_text_from_pdf_bytes(pdf_bytes)
         resume_skills = extract_skills_with_gemini(resume_text)
-        matches = get_top_job_matches(resume_skills)
+        resume_profile = extract_resume_profile(resume_text)
+        matches = get_top_job_matches(resume_skills, resume_profile)
         word_cloud_skills_freq = extract_skills(resume_text)
         salary_trend = get_salary_trend(matches)
-        resume_profile = extract_resume_profile(resume_text)
 
         return {
             "resume_skills": resume_skills,
@@ -386,7 +315,6 @@ def process_resume_and_match_jobs(pdf_bytes: bytes) -> dict:
             "salaryTrend": salary_trend,
             "resumeProfile": resume_profile
         }
-
     except Exception as e:
         print("❌ Error in resume processing:", e)
         traceback.print_exc()
