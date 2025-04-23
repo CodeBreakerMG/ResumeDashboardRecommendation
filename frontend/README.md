@@ -55,7 +55,7 @@ We suggest that you begin by typing:
 
 
 ### Folder Structure:
-
+```
 dataviz-dashboard/
 ├── public/                     # Static HTML + favicons
 ├── src/
@@ -91,3 +91,4 @@ dataviz-dashboard/
 │
 ├── package.json
 └── README.md                   # you are here
+```
