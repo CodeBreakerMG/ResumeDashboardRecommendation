@@ -10,6 +10,8 @@ import { useNavigate } from 'react-router-dom';
 import ResumeIcon from '@mui/icons-material/Description';
 import SpeedIcon from '@mui/icons-material/Speed';
 import ThumbUpIcon from '@mui/icons-material/ThumbUp';
+
+// Sample resumes that are bundled within the app
 import sample1Pdf from '../assets/sample_resumes/Sample1.pdf';
 import sample2Pdf from '../assets/sample_resumes/Sample2.pdf';
 import sample3Pdf from '../assets/sample_resumes/Sample3.pdf';
@@ -19,18 +21,21 @@ export default function LandingPage() {
   const fileInputRef = useRef(null);
   const navigate = useNavigate();
 
+  // Handle file selection - triggered when user selects a file then navigates to the main dahsboard while passing the File object
   const handleFileChange = (e) => {
     const file = e.target.files[0];
     if (file) navigate('/main', { state: { file } });
   };
   const handleUploadClick = () => fileInputRef.current.click();
 
+  // Mapping sample resume keys to their respective URLs
   const sampleMap = {
     sample1: sample1Pdf,
     sample2: sample2Pdf,
     sample3: sample3Pdf
   };
-  
+
+// Handle sample resume click - fetches the sample file and navigates to the main dashboard with the File object
 const handleSampleClick = async (key) => {
   const url = sampleMap[key];               
   const res = await fetch(url);
@@ -56,7 +61,7 @@ const handleSampleClick = async (key) => {
         overflow: 'hidden',
       }}
     >
-      {/* Left column: Hero & upload */}
+      {/* Left column: Hero text, upload button, and sample buttons */}
       <Box
         sx={{
           flex: 1,
@@ -67,6 +72,7 @@ const handleSampleClick = async (key) => {
           px: { xs: 4, md: 8 },
         }}
       >
+        {/* App title */}
         <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
           <ResumeIcon sx={{ fontSize: 48, mr: 1 }} aria-hidden="true" />
           <Typography variant="h3" component="h1" sx={{ fontWeight: 700, lineHeight: 1.1 }}>
@@ -78,7 +84,9 @@ const handleSampleClick = async (key) => {
           Upload your resume and let our AI match you with the best opportunities—accurate, personalized, and lightning‑fast.
         </Typography>
 
+        {/* Upload & Sample buttons */}
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mb: 3 }}>
+          {/* Primary upload button */}
           <Button
             size="large"
             variant="contained"

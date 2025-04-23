@@ -7,7 +7,7 @@ export default function JobComparisonChart({ progression }) {
   const ref = useRef();
   const [size, setSize] = useState({ width: 400, height: 300 });
 
-  // responsive container
+  // responsive container to handle resizing
   useEffect(() => {
     const onResize = () => {
       if (!ref.current) return;
@@ -21,12 +21,13 @@ export default function JobComparisonChart({ progression }) {
     return () => window.removeEventListener('resize', onResize);
   }, []);
 
-  
+  // Logic to handle the progression data
   const { years, salaries } = useMemo(() => {
-    if (!progression) return { years: [], salaries: [] };
+    if (!progression) return { years: [], salaries: [] }; // Fallback to empty arrays
     const pts = Object.entries(progression)
       .map(([yr, sal]) => [parseFloat(yr), parseFloat(sal)])
       .sort(([a], [b]) => a - b);
+    // X and Y values for the chart
     return {
       years: pts.map(([y]) => y),
       salaries: pts.map(([, s]) => s),
@@ -36,6 +37,7 @@ export default function JobComparisonChart({ progression }) {
   const chartW = size.width;
   const chartH = size.height;
 
+  // If no data, show a message
   if (!years.length) {
     return <Typography>No salary trend data available.</Typography>;
   }
@@ -69,7 +71,6 @@ export default function JobComparisonChart({ progression }) {
                {
                 type: 'number',
                  label: 'Salary (k)',
-                 // ← shove the label 10px to the left
                  labelStyle: { dx: -10 },
                  valueFormatter: (v) => `${Math.round(v)}k`,
                  tickLabelProps: () => ({ fontSize: 11 }),

@@ -4,8 +4,10 @@ import { MapContainer, TileLayer, GeoJSON } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
 import usStatesData from '../../assets/us-states.json';
 
+// Default map center (geographic center of contiguous U.S.)
 const defaultCenter = [39.8283, -98.5795];
 
+// Mapping from full state names to abbreviations
 const nameToAbbr = {
   'Alabama': 'AL', 'Alaska': 'AK', 'Arizona': 'AZ', 'Arkansas': 'AR',
   'California': 'CA', 'Colorado': 'CO', 'Connecticut': 'CT',
@@ -27,9 +29,10 @@ const nameToAbbr = {
 };
 
 export default function LocationMap({ location, stateSalaryData = {} }) {
-  const [selectedState, setSelectedState] = useState(null);
-  const [hasValidated, setHasValidated]   = useState(false);
+  const [selectedState, setSelectedState] = useState(null); // Currently selected state code (e.g. "CA" for California)
+  const [hasValidated, setHasValidated]   = useState(false); // Flag to show validation message if no data for the passed-in location
 
+  // Compute min/max salaries for color scaling
   const [minVal, maxVal] = useMemo(() => {
     const vals = Object.values(stateSalaryData);
     return vals.length
@@ -37,6 +40,7 @@ export default function LocationMap({ location, stateSalaryData = {} }) {
       : [0, 1];
   }, [stateSalaryData]);
 
+  // When location or stateSalaryData updates, pick the state code
   useEffect(() => {
     if (!location) return;
     const parts = location.split(',').map(s => s.trim().toUpperCase());
@@ -45,6 +49,7 @@ export default function LocationMap({ location, stateSalaryData = {} }) {
     setHasValidated(true);
   }, [location, stateSalaryData]);
 
+  // Normalize salary → color (blue → orange gradient)
   const getColorForSalary = salary => {
     let norm = (salary - minVal) / (maxVal - minVal);
     norm = Math.max(0, Math.min(1, norm));
@@ -69,6 +74,7 @@ export default function LocationMap({ location, stateSalaryData = {} }) {
     };
   };
 
+  // Attach popups and hover behavior to each state layer
   const onEach = (feature, layer) => {
     const name   = feature.properties.name;
     const abbr   = nameToAbbr[name];
@@ -90,6 +96,7 @@ export default function LocationMap({ location, stateSalaryData = {} }) {
 
   return (
     <div style={{ position: 'relative', height: '100%' }}>
+      {/* Map view */}
       <MapContainer
         center={defaultCenter}
         zoom={4}
@@ -106,7 +113,7 @@ export default function LocationMap({ location, stateSalaryData = {} }) {
         />
       </MapContainer>
 
-      {/* Legend */}
+      {/* Legend showing color gradient and min/max values */}
       <div style={{
         position: 'absolute',
         bottom: 10,

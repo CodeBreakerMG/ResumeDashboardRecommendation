@@ -16,7 +16,7 @@ import ResumeSummary from '../components/Textual/ResumeSummary';
 
 import jobsData from "../assets/jobsData_v2.json"; // adjust the path accordingly
 
- 
+//  API endpoint and timeout for processing the resume
 const FAST_API_URL =  "https://cloud.cesarsp.com:26000/resume/match"  // NEW ONE
 const TIMEOUT_MILISECONDS = 60000 //60000
 // https://cloud.cesarsp.com:26000/docs
@@ -26,9 +26,12 @@ const MainPage = () => {
   const uploadedFile = location.state?.file;
   const fileName = uploadedFile.name;
 
+  // UI states
   const [loading, setLoading] = useState(false);
   const [jobIndex, setJobIndex] = useState(0);
   const [showSummary, setShowSummary] = useState(true);
+
+  // Data states
   const [jobs, setJobs] = useState([]);         // matches
   const [resume_skills, setResume_skills] = useState([]);
   const [word_cloud_skills_freq, setWord_cloud_skills_freq] = useState([]);
@@ -60,6 +63,7 @@ const MainPage = () => {
 
       try {
         const response = await fetchWithTimeout();
+        // pull data from the response
         incomingJobs = response.data.matches;
         //setJobs(response.data.matches); // Or response.data.jobs
         setResume_skills(response.data.resume_skills);
@@ -69,6 +73,7 @@ const MainPage = () => {
         console.log("API Response:", response.data);
       }
       catch (error) {
+        // Handle error or timeout, use local fallback
         console.error("API call failed or timed out. Using local fallback.", error);
         incomingJobs = jobsData.matches;
         // setJobs(jobsData.matches); // Load local jobs
@@ -78,6 +83,7 @@ const MainPage = () => {
         setResumeProfile(jobsData.resumeProfile);
       }
       finally {
+        // Process the incoming jobs and compute the match score
         const normalizedResumeSkills = resume_skills.map(skill => skill.toLowerCase());
       
         const sortedJobs = [...incomingJobs]
@@ -105,6 +111,7 @@ const MainPage = () => {
               __skillMatchScore: skillMatchScore, // Attach for sorting
             };
           })
+          // Calculate match score based on experience and skills
           .sort((a, b) => {
             // First by skill match, then by matchScore
             if (b.__skillMatchScore !== a.__skillMatchScore) {
@@ -123,10 +130,10 @@ const MainPage = () => {
     sendFileToAPI();
   }, [uploadedFile]);
 
+  // navigate to next/previous job
   const handleNext = () => {
     setJobIndex((prev) => (prev + 1 < jobs.length ? prev + 1 : 0));
   };
-
   const handlePrevious = () => {
     setJobIndex((prev) => (prev - 1 >= 0 ? prev - 1 : jobs.length - 1));
   };
@@ -137,20 +144,12 @@ const MainPage = () => {
     return nums?.length === 2 ? [nums[0], nums[1]] : [nums?.[0] ?? 0, nums?.[0] ?? 0];
   };
 
-  // 1. Normalize to lowercase
+  // derive matched skills and percentage for current job
   const normalizedResumeSkills = resume_skills.map(skill => skill.toLowerCase());
   const normalizedJobSkills = (jobs[jobIndex]?.skills || []).map(skill => skill.toLowerCase());
-
-  // 2. Calculate matched skills
   const matchedSkills = normalizedJobSkills.filter(skill =>
     normalizedResumeSkills.includes(skill)
   );
-
-  // 3. Compute the match percentage
-  /*const skillMatchScore = normalizedJobSkills.length > 0
-    ? (matchedSkills.length / normalizedJobSkills.length) * 100
-    : 0;
-*/
 
   const skillMatchScore = normalizedJobSkills.length > 0
     ? (() => {
@@ -176,6 +175,7 @@ const MainPage = () => {
   return (
     <>
       {loading ? (
+        // full-screen overlay while parsing
         <Box
           component="main"
           sx={{
@@ -203,6 +203,7 @@ const MainPage = () => {
           {/* Optional: <CircularProgress color="primary" sx={{ ml: 2 }} /> */}
         </Box>
       ) : jobs.length > 0 ? (
+        // main dashboard view
         <Grid container spacing={2} sx={{ height: 'calc(100vh - 64px)' }}>
           <AppBarTip
             filename={fileName}
@@ -212,6 +213,7 @@ const MainPage = () => {
             userName={resumeProfile.name}
           />
           <Grid size={12} >
+                {/* Resume summary panel */}
                 {showSummary && (
                     <ResumeSummary
                       jobCount={jobs.length}
@@ -228,7 +230,7 @@ const MainPage = () => {
                   
                 )}
           </Grid>
-
+          {/* Left pane: job details and navigation */}
           <Grid size={4} container spacing={2} sx={{ height: '100%', flexWrap: 'wrap', alignContent: 'flex-start' }}>
             <Paper
               sx={{
@@ -251,8 +253,9 @@ const MainPage = () => {
               </Stack>
             </Paper>
           </Grid>
-
+          {/* Right pane: graphs & charts */}
           <Grid size={8} container spacing={2} sx={{ height: '100%', flexWrap: 'wrap', alignContent: 'flex-start' }}>
+            {/* Match score */}
             <Grid size={4} paddingX={1} sx={{ minHeight: 300 }}>
               <GraphContainer>
                 <Typography variant="h5" gutterBottom color="rgb(0,93,189)">Match Score</Typography>
@@ -265,7 +268,7 @@ const MainPage = () => {
                 />
               </GraphContainer>
             </Grid>
-
+            {/* Salary Trend */}
             <Grid size={4} paddingX={1} sx={{ minHeight: 300 }}>
               <GraphContainer>
                 <Typography variant="h5" gutterBottom color=" rgb(255,133,0)">Exp. & Salary: {jobs[jobIndex]?.jobTitle}</Typography>
@@ -276,7 +279,7 @@ const MainPage = () => {
                 })()}
               </GraphContainer>
             </Grid>
-
+            {/* Location map */}
             <Grid size={4} paddingX={1} sx={{ minHeight: 300 }}>
               <GraphContainer>
                 <Typography variant="h5" color=" rgb(255,133,0)">Location: {jobs[jobIndex]?.jobTitle}</Typography>
@@ -296,14 +299,14 @@ const MainPage = () => {
                 })()}
               </GraphContainer>
             </Grid>
-
+            {/* Skill Frequency */}
             <Grid size={8} paddingX={1} sx={{ minHeight: 300 }}>
               <GraphContainer>
                 <Typography variant="h5" gutterBottom color="rgb(0,93,189)">Skill Frequency</Typography>
                 <SkillFrequencyChart job={jobs[jobIndex]} jobs={jobs} />
               </GraphContainer>
             </Grid>
-
+            {/* Benefit Coverage */}
             <Grid size={4} paddingX={1} sx={{ minHeight: 300 }}>
               <GraphContainer>
                 <Typography variant="h5" gutterBottom color="rgb(0,93,189)">Benefit Coverage</Typography>
@@ -313,6 +316,7 @@ const MainPage = () => {
           </Grid>
         </Grid>
       ) : (
+        // Fallback is there are no jobs
         <Typography variant="h6" sx={{ textAlign: 'center', mt: 10 }}>
           No job data found. Please upload a valid file.
         </Typography>

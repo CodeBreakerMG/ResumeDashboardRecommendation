@@ -1,26 +1,39 @@
-# Frontend
+# Resume Dashboard Recommendation — Frontend
 
-This is the folder containing the frontend for the project
+This folder contains the React frontend for the Resume Dashboard Recommendation app. Users upload a resume (PDF/DOC/TXT), our AI matches it against a job dataset, and you get an interactive dashboard of:
 
-# Dataset (Temporary)
+- Top job matches with detailed views  
+- Skill‐match scores and word‑clouds  
+- Salary‑vs‑experience line charts  
+- Benefits radar charts  
+- US‑map visualizations of salary distribution  
 
-The Job Dataset has been taken from 
+---
 
-# Installation/Setup for REACT
+## Quick Start
 
-1. Install Node.js https://nodejs.org/, and then run `node -v` and `npm -v` in your terminal to verify.
-2. [Already done so for this project] Create a React project with `npx create-react-app dataviz-dashboard`
-3. Install the required dependencies:
+1. **Install Node.js & npm**  
+   • Download/install from https://nodejs.org/  
+   • Verify:  
+     ```bash
+     node -v
+     npm -v
+     ```
+
+2. **Install Dependencies**  
+   ```bash
+   cd frontend/dataviz-dashboard
+   npm install
+   ```
+
+3. **Install the required dependencies:**
     - `npm install @mui/material @emotion/react @emotion/styled`
-    - `npm install @mui/icons-material`
-    - `npm install papaparse`
+    - `npm install @mui/icons-material`  
     - `npm install recharts`
 	- `npm install react-router-dom`
 	- `npm install @mui/x-charts`
 
-
-
-4. Commands that we can use inside that directory:
+4. **Commands that we can use inside that directory:**
 
   `npm start`
     Starts the development server.
@@ -43,28 +56,38 @@ We suggest that you begin by typing:
 
 ### Folder Structure:
 
-src/
+dataviz-dashboard/
+├── public/                     # Static HTML + favicons
+├── src/
+│   ├── assets/
+│   │   ├── jobsData_v2.json    # Mock job data fallback
+│   │   ├── sample_resumes/     # Bundled PDF samples
+│   │   └── us-states.json      # GeoJSON for map
+│   │
+│   ├── components/
+│   │   ├── Charts/             # chart + map React components
+│   │   │   ├── JobComparisonChart.jsx
+│   │   │   ├── LocationMap.jsx
+│   │   │   ├── MatchScoreChart.jsx
+│   │   │   ├── SkillFrequencyChart.jsx
+│   │   │   ├── JobBenefitsRadarChart.jsx
+│   │   │   └── SkillWordCloud.jsx
+│   │   │
+│   │   ├── Other/              # layout helpers
+│   │   │   ├── AppBarTip.jsx
+│   │   │   └── GraphContainer.jsx
+│   │   │
+│   │   └── Textual/            # textual/detail views
+│   │       ├── JobDetailView.jsx
+│   │       └── ResumeSummary.jsx
+│   │
+│   ├── pages/
+│   │   ├── LandingPage.jsx     # upload hero + samples
+│   │   └── MainPage.jsx        # dashboard with charts
+│   │
+│   ├── App.js                  # top‐level router & theme
+│   ├── index.js                # React DOM entry
+│   └── theme.js                # optional MUI custom theme
 │
-├── assets/              # Static assets like logo, images
-│
-├── components/          # Reusable UI components
-│   ├── DataTable/
-│   │   └── DataTable.jsx
-│   ├── Charts/
-│   │   ├── BarChartComponent.jsx
-│   │   ├── LineChartComponent.jsx
-│   │   ├── PieChartComponent.jsx
-│   │   └── ScatterPlotComponent.jsx
-│   └── Upload/
-│       └── FileUpload.jsx
-│
-├── pages/               # Page-level views
-│   ├── LandingPage.jsx
-│   └── MainPage.jsx
-│
-├── utils/               # Utility functions (e.g., CSV parsing)
-│   └── csvParser.js
-│
-├── App.js               # Main App wrapper
-├── index.js             # Entry point
-└── theme.js             # (Optional) Material UI custom theme setup
+├── package.json
+└── README.md                   # you are here
