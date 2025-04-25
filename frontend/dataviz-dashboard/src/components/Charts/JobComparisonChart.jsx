@@ -3,11 +3,18 @@ import React, { useRef, useEffect, useState, useMemo } from 'react';
 import { LineChart } from '@mui/x-charts/LineChart';
 import { Grid, Typography } from '@mui/material';
 
+/**
+ * JobComparisonChart Component
+ * Displays a responsive Line Chart showing salary progression based on years of experience.
+ * 
+ * Props:
+ * - progression: An object mapping years to salary values.
+ */
 export default function JobComparisonChart({ progression }) {
   const ref = useRef();
   const [size, setSize] = useState({ width: 400, height: 300 });
 
-  // responsive container to handle resizing
+  // === Handle Responsive Resizing ===
   useEffect(() => {
     const onResize = () => {
       if (!ref.current) return;
@@ -16,18 +23,19 @@ export default function JobComparisonChart({ progression }) {
         height: ref.current.offsetHeight,
       });
     };
-    onResize();
+    onResize();  // Initial sizing
     window.addEventListener('resize', onResize);
     return () => window.removeEventListener('resize', onResize);
   }, []);
 
-  // Logic to handle the progression data
+  // === Process Progression Data into Chart-Friendly Arrays ===
   const { years, salaries } = useMemo(() => {
-    if (!progression) return { years: [], salaries: [] }; // Fallback to empty arrays
+    if (!progression) return { years: [], salaries: [] };
+
     const pts = Object.entries(progression)
       .map(([yr, sal]) => [parseFloat(yr), parseFloat(sal)])
-      .sort(([a], [b]) => a - b);
-    // X and Y values for the chart
+      .sort(([a], [b]) => a - b);  // Sort by year ascending
+
     return {
       years: pts.map(([y]) => y),
       salaries: pts.map(([, s]) => s),
@@ -37,16 +45,22 @@ export default function JobComparisonChart({ progression }) {
   const chartW = size.width;
   const chartH = size.height;
 
-  // If no data, show a message
+  // === Fallback if No Data ===
   if (!years.length) {
     return <Typography>No salary trend data available.</Typography>;
   }
 
+  // === Render Responsive Line Chart ===
   return (
     <div
       ref={ref}
-      style={{ width: '100%', height: '100%', display: 'flex',
-               justifyContent: 'center', alignItems: 'center' }}
+      style={{
+        width: '100%',
+        height: '100%',
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center'
+      }}
     >
       <Grid container>
         <LineChart
@@ -56,6 +70,8 @@ export default function JobComparisonChart({ progression }) {
           curve="monotoneX"
           grid={{ vertical: true, horizontal: true, stroke: '#eee' }}
           slotProps={{ tooltip: { trigger: 'axis' } }}
+
+          // === X-Axis: Years of Experience ===
           xAxis={[{
             type: 'number',
             data: years,
@@ -67,27 +83,26 @@ export default function JobComparisonChart({ progression }) {
                 : (Number.isInteger(v) ? `${v}` : ''),
             tickLabelProps: () => ({ fontSize: 11 }),
           }]}
-          yAxis={[
-               {
-                type: 'number',
-                 label: 'Salary (k)',
-                 labelStyle: { dx: -10 },
-                 valueFormatter: (v) => `${Math.round(v)}k`,
-                 tickLabelProps: () => ({ fontSize: 11 }),
-               },
-             ]}
 
-          series={[
-            {
-              data: salaries,
-              label: 'Salary',
-              showMark: true,
-              markSize: 6,
-              lineWidth: 2,
-              valueFormatter: (v) =>
-                `$${Math.round(v * 1000).toLocaleString()}`,
-            },
-          ]}
+          // === Y-Axis: Salary in Thousands ===
+          yAxis={[{
+            type: 'number',
+            label: 'Salary (k)',
+            labelStyle: { dx: -10 },
+            valueFormatter: (v) => `${Math.round(v)}k`,
+            tickLabelProps: () => ({ fontSize: 11 }),
+          }]}
+
+          // === Line Series Data ===
+          series={[{
+            data: salaries,
+            label: 'Salary',
+            showMark: true,
+            markSize: 6,
+            lineWidth: 2,
+            valueFormatter: (v) => `$${Math.round(v * 1000).toLocaleString()}`,
+          }]}
+
           hideLegend
         />
       </Grid>

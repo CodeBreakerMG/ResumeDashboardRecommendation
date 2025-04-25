@@ -56,39 +56,60 @@ We suggest that you begin by typing:
 
 ### Folder Structure:
 ```
-dataviz-dashboard/
-├── public/                     # Static HTML + favicons
-├── src/
-│   ├── assets/
-│   │   ├── jobsData_v2.json    # Mock job data fallback
-│   │   ├── sample_resumes/     # Bundled PDF samples
-│   │   └── us-states.json      # GeoJSON for map
-│   │
-│   ├── components/
-│   │   ├── Charts/             # chart + map React components
-│   │   │   ├── JobComparisonChart.jsx
-│   │   │   ├── LocationMap.jsx
-│   │   │   ├── MatchScoreChart.jsx
-│   │   │   ├── SkillFrequencyChart.jsx
-│   │   │   ├── JobBenefitsRadarChart.jsx
-│   │   │   └── SkillWordCloud.jsx
-│   │   │
-│   │   ├── Other/              # layout helpers
-│   │   │   ├── AppBarTip.jsx
-│   │   │   └── GraphContainer.jsx
-│   │   │
-│   │   └── Textual/            # textual/detail views
-│   │       ├── JobDetailView.jsx
-│   │       └── ResumeSummary.jsx
-│   │
-│   ├── pages/
-│   │   ├── LandingPage.jsx     # upload hero + samples
-│   │   └── MainPage.jsx        # dashboard with charts
-│   │
-│   ├── App.js                  # top‐level router & theme
-│   ├── index.js                # React DOM entry
-│   └── theme.js                # optional MUI custom theme
+
+dataviz-dashboard/               # Root folder of the React + Data Visualization Dashboard project
 │
-├── package.json
-└── README.md                   # you are here
+├── .idea/                        # IDE settings (for JetBrains IDEs, safe to ignore in most cases)
+├── .vscode/                      # VSCode workspace settings (extensions, launch configs)
+├── node_modules/                 # Auto-generated dependencies folder (managed by npm/yarn)
+├── public/                       # Static public assets (index.html, favicon, etc.)
+│
+├── src/                          # Main source code for the React application
+│   ├── assets/                   # Static assets like fonts, JSON data, and sample resumes
+│   │   ├── fonts/                # Custom font files (e.g., Flexo font)
+│   │   ├── json/                 # Local JSON data used for fallback or testing
+│   │   └── sample_resumes/       # Example resumes for testing the upload & parsing features
+│   │
+│   ├── components/               # Reusable UI components grouped by function
+│   │   ├── Charts/               # All data visualization components (Radar, Line, Circular, Heatmaps)
+│   │   │   ├── JobBenefitsRadarChart.jsx   # Radar chart for visualizing job benefit coverage
+│   │   │   ├── JobComparisonChart.jsx      # Line chart for salary vs experience progression
+│   │   │   ├── LocationMap.jsx             # Map visualization for job locations
+│   │   │   ├── MatchScoreChart.jsx         # Circular progress charts for match scores
+│   │   │   └── SkillFrequencyChart.jsx     # Heatmap/grid for skill frequency visualization
+│   │   │
+│   │   ├── Grouper/              # Components for grouping textual data & summaries
+│   │   │   ├── JobDetailView.jsx         # Detailed view of a selected job
+│   │   │   └── ResumeSummary.jsx         # Overview panel showing parsed resume stats
+│   │   │
+│   │   ├── Layout/               # Layout and helper UI components
+│   │   │   ├── AppBarTip.jsx              # Custom AppBar with file info and toggle buttons
+│   │   │   ├── EducationCard.jsx          # Card component for displaying education entries
+│   │   │   ├── ExperienceTimeline.jsx     # (Assumed) Timeline component for experience visualization
+│   │   │   ├── GraphContainer.jsx         # Wrapper providing expand/collapse for charts
+│   │   │   ├── JobCard.jsx                # Card for listing job experiences
+│   │   │   └── NumberBadge.jsx            # Badge component for numeric stats (e.g., job count)
+│   │
+│   ├── pages/                   # Main pages of the app (Routing targets)
+│   │   ├── landing.css                   # Styling for LandingPage
+│   │   ├── LandingPage.jsx               # Landing page with file upload and intro UI
+│   │   └── MainPage.jsx                  # Core dashboard page with visualizations and job data
+│   │
+│   ├── utils/                   # Utility functions/helpers
+│   │   └── formatDateToMonthYear.jsx     # Date formatting utility
+│   │
+│   ├── theme.css                # Global CSS variables and theme definitions
+│   ├── App.js                   # Main React component handling routing
+│   ├── App.css                  # Global styles for the App component
+│   ├── index.js                 # React entry point (renders App to DOM)
+│   ├── index.css                # Base CSS resets and global styles
+│   ├── theme.js                 # MUI theme customization
+│
+├── .dockerignore               # Files/folders to ignore when building Docker images
+├── Dockerfile                  # Docker configuration for containerizing the app
+├── .gitignore                  # Specifies files to exclude from Git tracking
+├── package.json                # Project metadata, scripts, and dependencies list
+├── package-lock.json           # Exact dependency tree (auto-generated by npm)
+└── README.md                   # Project overview and setup instructions
+
 ```
