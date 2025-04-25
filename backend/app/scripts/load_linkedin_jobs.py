@@ -1,3 +1,4 @@
+# This script loads job postings from a CSV file into a database.
 import pandas as pd
 import json
 import numpy as np
@@ -9,26 +10,27 @@ import ollama
 from app.db.database import SessionLocal
 from app.models.job import JobPosting
 
-# ---------------------- CONFIG ----------------------
+# Constants
 CSV_PATH = "data/postings.csv"
 START_ROW = 10
 END_ROW = 1000  # Adjust for batch size
 
+# Global variables
 fake = Faker()
 embedder = SentenceTransformer("all-MiniLM-L6-v2", device="cpu")
 df = pd.read_csv(CSV_PATH).iloc[START_ROW:END_ROW].copy()
 
-
-# ---------------------- HELPERS ----------------------
+# Call to Mistral model
 def extract_mistral(prompt: str):
     try:
+        # Call Mistral model using Ollama
         res = ollama.chat(model="mistral", messages=[{"role": "user", "content": prompt}])
         return res['message']['content'].strip()
     except Exception as e:
         print(f"❌ Mistral error: {e}")
         return ""
 
-
+# Extract skills from job description
 def extract_skills_mistral(description: str) -> list[str]:
     prompt = f"""Extract a comma-separated list of lowercase professional skill keywords from this job description:
 
@@ -37,14 +39,17 @@ def extract_skills_mistral(description: str) -> list[str]:
 Return only a single line like: python, sql, communication, azure, docker
 """
     try:
+        # Call Mistral model using Ollama
         raw = extract_mistral(prompt)
+        # Parse the response
         skills = [s.strip().lower() for s in raw.split(",") if s.strip()]
         return skills
+    # Handle any parsing errors
     except Exception as e:
         print(f"⚠️ Skill parse error: {e}")
         return []
 
-
+# Method to normalize salary
 def normalize_salary(min_sal, max_sal) -> str:
     try:
         min_val = int(min_sal)
@@ -55,17 +60,18 @@ def normalize_salary(min_sal, max_sal) -> str:
     except:
         return "$50K-$100K"
 
-
+# Method to safely convert timestamp
 def safe_timestamp(ts) -> datetime:
     try:
         return datetime.fromtimestamp(float(ts) / 1000.0)
     except:
         return datetime.now()
 
-
-# ---------------------- DB INSERT ----------------------
+# Connect to the database
 db: Session = SessionLocal()
+# Load the CSV file as a DataFrame
 for _, row in df.iterrows():
+    # Try to parse the row and insert it into the database
     try:
         job_id = int(row["job_id"])
         experience = "2 to 8 Years"
@@ -129,11 +135,12 @@ for _, row in df.iterrows():
             company_profile=company_profile,
             embedding=embedding
         )
-
+        # Add the job to the session and commit
         db.add(job)
         db.commit()
         print(f"✅ Inserted job {job_id}")
     except Exception as e:
+        # Rollback in case of error
         db.rollback()
         print(f"❌ Failed to insert job {row.get('job_id')}: {e}")
 

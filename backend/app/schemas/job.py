@@ -7,7 +7,7 @@ def to_camel(string: str) -> str:
     parts = string.split('_')
     return parts[0] + ''.join(p.capitalize() for p in parts[1:])
 
-
+# Job schema
 class JobBase(BaseModel):
     company: Optional[str]
     job_title: Optional[str]
@@ -23,15 +23,15 @@ class JobBase(BaseModel):
         populate_by_name=True
     )
 
-
+# JobCreate schema
 class JobCreate(JobBase):
     pass
 
-
+# JobUpdate schema
 class JobUpdate(JobBase):
     pass
 
-
+# JobOut schema
 class JobOut(JobBase):
     id: int
 

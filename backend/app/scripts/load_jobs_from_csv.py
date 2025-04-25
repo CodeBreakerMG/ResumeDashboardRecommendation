@@ -1,3 +1,4 @@
+# This script loads job postings from a CSV file into a database.
 import ast
 import json
 import html
@@ -8,6 +9,7 @@ from app.db.database import engine, SessionLocal
 from app.models.job import JobPosting
 from app.services.parser import smart_split_skills
 
+# Define the chunk size for reading the CSV file
 CHUNK_SIZE = 10000
 
 def parse_company_profile(raw):
@@ -30,9 +32,11 @@ def clean_skills(raw):
     except Exception:
         return []
 
+# Function to process each chunk of the DataFrame
 def process_chunk(chunk: pd.DataFrame, db: Session):
     for _, row in chunk.iterrows():
         try:
+            # Clean and parse the data
             job = JobPosting(
                 id=int(row['id']),
                 experience=row.get('experience'),
@@ -62,20 +66,27 @@ def process_chunk(chunk: pd.DataFrame, db: Session):
         except Exception as e:
             print(f"Failed on row {row.get('id')}: {e}")
             continue
-
+    # Commit the changes to the database
     db.commit()
 
+# Function to load jobs from a CSV file
 def load_jobs_from_csv(csv_path: str):
-    db = SessionLocal()
+    db = SessionLocal() # Create a new session
+    # Read the CSV file in chunks
     chunks = pd.read_csv(csv_path, chunksize=CHUNK_SIZE)
 
+    # Process each chunk
     for i, chunk in enumerate(chunks):
         print(f"Processing chunk {i+1}")
         process_chunk(chunk, db)
 
+    # Close the database session
     db.close()
 
+# Main function to run the script
 if __name__ == "__main__":
     from app.db.database import Base
+    # Create the database tables
     Base.metadata.create_all(bind=engine)
+    # Load jobs from the CSV file
     load_jobs_from_csv("data/jobs-manuel.csv")  # Replace with your path

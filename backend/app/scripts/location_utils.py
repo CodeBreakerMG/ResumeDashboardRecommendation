@@ -4,6 +4,7 @@ import random
 # Load the CSV once at module level
 city_df = pd.read_csv("data/us_cities.csv")
 
+# Get a random city location
 def get_random_location():
     row = city_df.sample(1).iloc[0]
     return {

@@ -8,12 +8,14 @@ from app.services.llm_skill_splitter import split_skills_with_llm  # or use your
 def load_secondary_dataset(csv_path: str, max_jobs: int = 500):
     df = pd.read_csv(csv_path)
 
-    # Clean salary (optional - based on your colleague's suggestion)
+
     df['salary'] = df['salary'].replace(286497.1164575069, 0)
     df = df.fillna("")  # Avoid NaN crashes
 
+
     db: Session = SessionLocal()
     inserted = 0
+
 
     for _, row in df.iterrows():
         if inserted >= max_jobs:

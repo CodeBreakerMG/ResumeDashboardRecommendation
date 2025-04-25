@@ -1,3 +1,4 @@
+# This file contains the Pydantic models for request and response schemas.
 from pydantic import BaseModel, EmailStr
 
 class UserRegister(BaseModel):

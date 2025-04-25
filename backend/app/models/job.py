@@ -1,6 +1,7 @@
 from sqlalchemy import Column, String, Integer, Float, Date, JSON
 from app.db.database import Base
 
+# JobPosting model
 class JobPosting(Base):
     __tablename__ = "job_postings"
 
