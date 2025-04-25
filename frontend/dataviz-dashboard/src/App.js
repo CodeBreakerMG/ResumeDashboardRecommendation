@@ -3,8 +3,7 @@ import LandingPage from './pages/LandingPage';
 import { ThemeProvider } from '@mui/material';
 import theme from './theme';
 import MainPage from './pages/MainPage';
-import SampleMainPage from './pages/SampleMainPage';
- 
+
 
 function App() {
   return (
@@ -13,7 +12,6 @@ function App() {
         <Routes>
           <Route path="/" element={<LandingPage />} />
           <Route path="/main" element={<MainPage />} />
-          <Route path="/sample" element={<SampleMainPage />} />
         </Routes>
       </Router>
     </ThemeProvider>

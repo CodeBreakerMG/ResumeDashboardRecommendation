@@ -1,13 +1,7 @@
 import React, { useMemo } from 'react';
 
-import {
-  RadarChart,
-  PolarGrid,
-  PolarAngleAxis,
-  PolarRadiusAxis,
-  Radar,
-  ResponsiveContainer,
-  Tooltip,
+import { RadarChart, PolarGrid, PolarAngleAxis, 
+         PolarRadiusAxis, Radar, ResponsiveContainer, Tooltip,
 } from 'recharts';
 
 // Props: job (object), jobs (array)

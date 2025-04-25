@@ -3,23 +3,23 @@ import { Stack, Box, Grid, Typography, Button, Paper } from '@mui/material'; // 
 import { useLocation } from 'react-router-dom';
 import axios from 'axios';
 
-import JobDetailView from '../components/Textual/JobDetailView';
-import AppBarTip from '../components/Other/AppBarTip';
-import GraphContainer from '../components/Other/GraphContainer';
+/*Components Imports*/ 
+import JobDetailView from '../components/Grouper/JobDetailView';
+import AppBarTip from '../components/Layout/AppBarTip';
+import GraphContainer from '../components/Layout/GraphContainer';
 import LocationMap from '../components/Charts/LocationMap';
 import SkillFrequencyChart from '../components/Charts/SkillFrequencyChart';
 import JobBenefitsRadarChart from '../components/Charts/JobBenefitsRadarChart';
 import JobComparisonChart from '../components/Charts/JobComparisonChart';
 import MatchScoreChart from '../components/Charts/MatchScoreChart';
-import SkillWordCloud from '../components/Charts/SkillWordCloud';
-import ResumeSummary from '../components/Textual/ResumeSummary';
+//import SkillWordCloud from '../components/Charts/SkillWordCloud';
+import ResumeSummary from '../components/Grouper/ResumeSummary';
 
-import jobsData from "../assets/jobsData_v2.json"; // adjust the path accordingly
+import jobsData from "../assets/json/jobsData.json"; // DEFAULT JSON AS AN EXAMPLE (IF NO CONNECTION TO BACKEND)
 
-//  API endpoint and timeout for processing the resume
-const FAST_API_URL =  "https://cloud.cesarsp.com:26000/resume/match"  // NEW ONE
-const TIMEOUT_MILISECONDS = 60000 //60000
-// https://cloud.cesarsp.com:26000/docs
+/*API CONNECTION, */
+const FAST_API_URL =  "https://cloud.cesarsp.com:26000/resume/match"  // URL CONNECTION. IF NOT WORKING, IT WILL DEFAULT TO LOCAL JSON
+const TIMEOUT_MILISECONDS = 60000                                     
 
 const MainPage = () => {
   const location = useLocation();
@@ -34,10 +34,12 @@ const MainPage = () => {
   // Data states
   const [jobs, setJobs] = useState([]);         // matches
   const [resume_skills, setResume_skills] = useState([]);
-  const [word_cloud_skills_freq, setWord_cloud_skills_freq] = useState([]);
+  //const [word_cloud_skills_freq, setWord_cloud_skills_freq] = useState([]);
   const [salaryTrends, setSalaryTrends] = useState({});
   const [resumeProfile, setResumeProfile] = useState([]);         // matches 
 
+
+  /*USE EFFECT MODULE, FOR LOADING THE RESUME AND CONNECTING IT TO BACKEND*/
   useEffect(() => {
     const sendFileToAPI = async () => {
       if (!uploadedFile) return;
@@ -67,7 +69,7 @@ const MainPage = () => {
         incomingJobs = response.data.matches;
         //setJobs(response.data.matches); // Or response.data.jobs
         setResume_skills(response.data.resume_skills);
-        setWord_cloud_skills_freq(response.data.word_cloud_skills_freq);
+        //setWord_cloud_skills_freq(response.data.word_cloud_skills_freq);
         setSalaryTrends(response.data.salaryTrend);
         setResumeProfile(response.data.resumeProfile);
         console.log("API Response:", response.data);
@@ -78,14 +80,13 @@ const MainPage = () => {
         incomingJobs = jobsData.matches;
         // setJobs(jobsData.matches); // Load local jobs
         setResume_skills(jobsData.resume_skills);
-        setWord_cloud_skills_freq(jobsData.word_cloud_skills_freq);
+        //setWord_cloud_skills_freq(jobsData.word_cloud_skills_freq);
         setSalaryTrends(jobsData.salaryTrend);
         setResumeProfile(jobsData.resumeProfile);
       }
       finally {
         // Process the incoming jobs and compute the match score
         const normalizedResumeSkills = resume_skills.map(skill => skill.toLowerCase());
-      
         const sortedJobs = [...incomingJobs]
           .map(job => {
             const normalizedJobSkills = (job.skills || []).map(skill => skill.toLowerCase());
@@ -102,6 +103,8 @@ const MainPage = () => {
               }
             }
       
+
+            /*Skill Match Score Booster*/
             const skillMatchScore = normalizedJobSkills.length > 0
               ? Math.min((counter / normalizedJobSkills.length) * 1.5, 1) * 100
               : 0;
@@ -111,7 +114,8 @@ const MainPage = () => {
               __skillMatchScore: skillMatchScore, // Attach for sorting
             };
           })
-          // Calculate match score based on experience and skills
+
+          // Rank and sort the match jobs based on skill
           .sort((a, b) => {
             // First by skill match, then by matchScore
             if (b.__skillMatchScore !== a.__skillMatchScore) {
@@ -124,9 +128,7 @@ const MainPage = () => {
         setJobs(lastSortedJobs);
         setLoading(false);
       }
-      
     };
-
     sendFileToAPI();
   }, [uploadedFile]);
 
@@ -147,9 +149,6 @@ const MainPage = () => {
   // derive matched skills and percentage for current job
   const normalizedResumeSkills = resume_skills.map(skill => skill.toLowerCase());
   const normalizedJobSkills = (jobs[jobIndex]?.skills || []).map(skill => skill.toLowerCase());
-  const matchedSkills = normalizedJobSkills.filter(skill =>
-    normalizedResumeSkills.includes(skill)
-  );
 
   const skillMatchScore = normalizedJobSkills.length > 0
     ? (() => {
@@ -167,10 +166,6 @@ const MainPage = () => {
         return Math.min((counter / normalizedJobSkills.length)*1.5,1) * 100;
       })()
     : 0;
-
-  const getIndustryExperience = (industry, experienceByIndustry) => {
-    return experienceByIndustry?.[industry] ?? 0;
-  }
 
   return (
     <>
