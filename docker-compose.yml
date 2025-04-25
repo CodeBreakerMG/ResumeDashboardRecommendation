@@ -1,0 +1,25 @@
+# This is an example of a Docker Compose file for running the Resume API and Frontend.
+version: '3.9'
+
+services:
+  resume-api:
+    build:
+      context: ./backend
+    image: resume-api
+    container_name: resume-api
+    restart: unless-stopped
+    ports:
+      - "8000:8000"
+    env_file:
+      - .env
+    volumes:
+      - /home/ubuntu/resumeapp.db:/app/app.db
+
+  resume-frontend:
+    build:
+      context: ./frontend/dataviz-dashboard
+    image: resume-frontend
+    container_name: resume-frontend
+    restart: unless-stopped
+    ports:
+      - "9999:80"
